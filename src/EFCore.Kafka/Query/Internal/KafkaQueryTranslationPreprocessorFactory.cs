@@ -1,7 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
-using MASES.EntityFrameworkCore.Kafka.Storage.Internal;
 
 namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 
@@ -11,28 +9,24 @@ namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class KafkaQueryContextFactory : IQueryContextFactory
+public class KafkaQueryTranslationPreprocessorFactory : IQueryTranslationPreprocessorFactory
 {
-    private readonly ICosmosClientWrapper _cosmosClient;
-
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public KafkaQueryContextFactory(
-        QueryContextDependencies dependencies,
-        ICosmosClientWrapper cosmosClient)
+    public KafkaQueryTranslationPreprocessorFactory(
+        QueryTranslationPreprocessorDependencies dependencies)
     {
         Dependencies = dependencies;
-        _cosmosClient = cosmosClient;
     }
 
     /// <summary>
     ///     Dependencies for this service.
     /// </summary>
-    protected virtual QueryContextDependencies Dependencies { get; }
+    protected virtual QueryTranslationPreprocessorDependencies Dependencies { get; }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -40,6 +34,6 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual QueryContext Create()
-        => new KafkaQueryContext(Dependencies, _cosmosClient);
+    public virtual QueryTranslationPreprocessor Create(QueryCompilationContext queryCompilationContext)
+        => new KafkaQueryTranslationPreprocessor(Dependencies, (KafkaQueryCompilationContext)queryCompilationContext);
 }

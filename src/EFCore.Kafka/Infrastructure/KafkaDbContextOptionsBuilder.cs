@@ -62,6 +62,19 @@ public class KafkaDbContextOptionsBuilder : IKafkaDbContextOptionsBuilderInfrast
         => OptionsBuilder;
 
     /// <summary>
+    ///     Configures the context to use the provided <see cref="IExecutionStrategy" />.
+    /// </summary>
+    /// <remarks>
+    ///     See <see href="https://aka.ms/efcore-docs-dbcontext-options">Using DbContextOptions</see>, and
+    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information and examples.
+    /// </remarks>
+    /// <param name="getExecutionStrategy">A function that returns a new instance of an execution strategy.</param>
+    public virtual KafkaDbContextOptionsBuilder ExecutionStrategy(
+        Func<ExecutionStrategyDependencies, IExecutionStrategy> getExecutionStrategy)
+        => WithOption(e => e.WithExecutionStrategyFactory(Check.NotNull(getExecutionStrategy, nameof(getExecutionStrategy))));
+
+
+    /// <summary>
     ///     Enables nullability check for all properties across all entities within the Kafka database.
     /// </summary>
     /// <remarks>
@@ -78,6 +91,20 @@ public class KafkaDbContextOptionsBuilder : IKafkaDbContextOptionsBuilderInfrast
         extension = extension.WithAutoOffsetReset(autoOffsetReset);
 
         ((IDbContextOptionsBuilderInfrastructure)OptionsBuilder).AddOrUpdateExtension(extension);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets an option by cloning the extension used to store the settings. This ensures the builder
+    ///     does not modify options that are already in use elsewhere.
+    /// </summary>
+    /// <param name="setAction">An action to set the option.</param>
+    /// <returns>The same builder instance so that multiple calls can be chained.</returns>
+    protected virtual KafkaDbContextOptionsBuilder WithOption(Func<KafkaOptionsExtension, KafkaOptionsExtension> setAction)
+    {
+        ((IDbContextOptionsBuilderInfrastructure)OptionsBuilder).AddOrUpdateExtension(
+            setAction(OptionsBuilder.Options.FindExtension<KafkaOptionsExtension>() ?? new KafkaOptionsExtension()));
 
         return this;
     }

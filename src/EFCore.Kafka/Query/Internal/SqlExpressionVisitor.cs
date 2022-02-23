@@ -1,10 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using MASES.EntityFrameworkCore.Kafka.Internal;
-
-#nullable disable
-
 namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 
 /// <summary>
@@ -13,22 +9,75 @@ namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class EntityProjectionExpression : Expression, IPrintableExpression, IAccessExpression
+public abstract class SqlExpressionVisitor : ExpressionVisitor
 {
-    private readonly Dictionary<IProperty, IAccessExpression> _propertyExpressionsMap = new();
-    private readonly Dictionary<INavigation, IAccessExpression> _navigationExpressionsMap = new();
-
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public EntityProjectionExpression(IEntityType entityType, Expression accessExpression)
+    protected override Expression VisitExtension(Expression extensionExpression)
     {
-        EntityType = entityType;
-        AccessExpression = accessExpression;
-        Name = (accessExpression as IAccessExpression)?.Name;
+        switch (extensionExpression)
+        {
+            case ShapedQueryExpression shapedQueryExpression:
+                return shapedQueryExpression.Update(
+                    Visit(shapedQueryExpression.QueryExpression), shapedQueryExpression.ShaperExpression);
+
+            case ReadItemExpression readItemExpression:
+                return readItemExpression;
+
+            case SelectExpression selectExpression:
+                return VisitSelect(selectExpression);
+
+            case ProjectionExpression projectionExpression:
+                return VisitProjection(projectionExpression);
+
+            case EntityProjectionExpression entityProjectionExpression:
+                return VisitEntityProjection(entityProjectionExpression);
+
+            case ObjectArrayProjectionExpression arrayProjectionExpression:
+                return VisitObjectArrayProjection(arrayProjectionExpression);
+
+            case FromSqlExpression fromSqlExpression:
+                return VisitFromSql(fromSqlExpression);
+
+            case RootReferenceExpression rootReferenceExpression:
+                return VisitRootReference(rootReferenceExpression);
+
+            case KeyAccessExpression keyAccessExpression:
+                return VisitKeyAccess(keyAccessExpression);
+
+            case ObjectAccessExpression objectAccessExpression:
+                return VisitObjectAccess(objectAccessExpression);
+
+            case SqlBinaryExpression sqlBinaryExpression:
+                return VisitSqlBinary(sqlBinaryExpression);
+
+            case SqlConstantExpression sqlConstantExpression:
+                return VisitSqlConstant(sqlConstantExpression);
+
+            case SqlUnaryExpression sqlUnaryExpression:
+                return VisitSqlUnary(sqlUnaryExpression);
+
+            case SqlConditionalExpression sqlConditionalExpression:
+                return VisitSqlConditional(sqlConditionalExpression);
+
+            case SqlParameterExpression sqlParameterExpression:
+                return VisitSqlParameter(sqlParameterExpression);
+
+            case InExpression inExpression:
+                return VisitIn(inExpression);
+
+            case SqlFunctionExpression sqlFunctionExpression:
+                return VisitSqlFunction(sqlFunctionExpression);
+
+            case OrderingExpression orderingExpression:
+                return VisitOrdering(orderingExpression);
+        }
+
+        return base.VisitExtension(extensionExpression);
     }
 
     /// <summary>
@@ -37,8 +86,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public sealed override ExpressionType NodeType
-        => ExpressionType.Extension;
+    protected abstract Expression VisitFromSql(FromSqlExpression fromSqlExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -46,8 +94,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override Type Type
-        => EntityType.ClrType;
+    protected abstract Expression VisitOrdering(OrderingExpression orderingExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -55,7 +102,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression AccessExpression { get; }
+    protected abstract Expression VisitSqlFunction(SqlFunctionExpression sqlFunctionExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -63,7 +110,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual IEntityType EntityType { get; }
+    protected abstract Expression VisitIn(InExpression inExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -71,7 +118,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual string Name { get; }
+    protected abstract Expression VisitSqlParameter(SqlParameterExpression sqlParameterExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -79,8 +126,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    protected override Expression VisitChildren(ExpressionVisitor visitor)
-        => Update(visitor.Visit(AccessExpression));
+    protected abstract Expression VisitSqlConditional(SqlConditionalExpression sqlConditionalExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -88,10 +134,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression Update(Expression accessExpression)
-        => accessExpression != AccessExpression
-            ? new EntityProjectionExpression(EntityType, accessExpression)
-            : this;
+    protected abstract Expression VisitSqlUnary(SqlUnaryExpression sqlUnaryExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -99,33 +142,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression BindProperty(IProperty property, bool clientEval)
-    {
-        if (!EntityType.IsAssignableFrom(property.DeclaringEntityType)
-            && !property.DeclaringEntityType.IsAssignableFrom(EntityType))
-        {
-            throw new InvalidOperationException(
-                CosmosStrings.UnableToBindMemberToEntityProjection("property", property.Name, EntityType.DisplayName()));
-        }
-
-        if (!_propertyExpressionsMap.TryGetValue(property, out var expression))
-        {
-            expression = new KeyAccessExpression(property, AccessExpression);
-            _propertyExpressionsMap[property] = expression;
-        }
-
-        if (!clientEval
-            // TODO: Remove once __jObject is translated to the access root in a better fashion and
-            // would not otherwise be found to be non-translatable. See issues #17670 and #14121.
-            && property.Name != StoreKeyConvention.JObjectPropertyName
-            && expression.Name.Length == 0)
-        {
-            // Non-persisted property can't be translated
-            return null;
-        }
-
-        return (Expression)expression;
-    }
+    protected abstract Expression VisitSqlConstant(SqlConstantExpression sqlConstantExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -133,35 +150,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression BindNavigation(INavigation navigation, bool clientEval)
-    {
-        if (!EntityType.IsAssignableFrom(navigation.DeclaringEntityType)
-            && !navigation.DeclaringEntityType.IsAssignableFrom(EntityType))
-        {
-            throw new InvalidOperationException(
-                CosmosStrings.UnableToBindMemberToEntityProjection("navigation", navigation.Name, EntityType.DisplayName()));
-        }
-
-        if (!_navigationExpressionsMap.TryGetValue(navigation, out var expression))
-        {
-            expression = navigation.IsCollection
-                ? new ObjectArrayProjectionExpression(navigation, AccessExpression)
-                : new EntityProjectionExpression(
-                    navigation.TargetEntityType,
-                    new ObjectAccessExpression(navigation, AccessExpression));
-
-            _navigationExpressionsMap[navigation] = expression;
-        }
-
-        if (!clientEval
-            && expression.Name.Length == 0)
-        {
-            // Non-persisted navigation can't be translated
-            return null;
-        }
-
-        return (Expression)expression;
-    }
+    protected abstract Expression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -169,12 +158,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression BindMember(
-        string name,
-        Type entityType,
-        bool clientEval,
-        out IPropertyBase propertyBase)
-        => BindMember(MemberIdentity.Create(name), entityType, clientEval, out propertyBase);
+    protected abstract Expression VisitKeyAccess(KeyAccessExpression keyAccessExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -182,44 +166,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression BindMember(
-        MemberInfo memberInfo,
-        Type entityType,
-        bool clientEval,
-        out IPropertyBase propertyBase)
-        => BindMember(MemberIdentity.Create(memberInfo), entityType, clientEval, out propertyBase);
-
-    private Expression BindMember(MemberIdentity member, Type entityClrType, bool clientEval, out IPropertyBase propertyBase)
-    {
-        var entityType = EntityType;
-        if (entityClrType != null
-            && !entityClrType.IsAssignableFrom(entityType.ClrType))
-        {
-            entityType = entityType.GetDerivedTypes().First(e => entityClrType.IsAssignableFrom(e.ClrType));
-        }
-
-        var property = member.MemberInfo == null
-            ? entityType.FindProperty(member.Name)
-            : entityType.FindProperty(member.MemberInfo);
-        if (property != null)
-        {
-            propertyBase = property;
-            return BindProperty(property, clientEval);
-        }
-
-        var navigation = member.MemberInfo == null
-            ? entityType.FindNavigation(member.Name)
-            : entityType.FindNavigation(member.MemberInfo);
-        if (navigation != null)
-        {
-            propertyBase = navigation;
-            return BindNavigation(navigation, clientEval);
-        }
-
-        // Entity member not found
-        propertyBase = null;
-        return null;
-    }
+    protected abstract Expression VisitObjectAccess(ObjectAccessExpression objectAccessExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -227,17 +174,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual EntityProjectionExpression UpdateEntityType(IEntityType derivedType)
-    {
-        if (!derivedType.GetAllBaseTypes().Contains(EntityType))
-        {
-            throw new InvalidOperationException(
-                CosmosStrings.InvalidDerivedTypeInEntityProjection(
-                    derivedType.DisplayName(), EntityType.DisplayName()));
-        }
-
-        return new EntityProjectionExpression(derivedType, AccessExpression);
-    }
+    protected abstract Expression VisitRootReference(RootReferenceExpression rootReferenceExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -245,8 +182,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    void IPrintableExpression.Print(ExpressionPrinter expressionPrinter)
-        => expressionPrinter.Visit(AccessExpression);
+    protected abstract Expression VisitEntityProjection(EntityProjectionExpression entityProjectionExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -254,15 +190,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override bool Equals(object obj)
-        => obj != null
-            && (ReferenceEquals(this, obj)
-                || obj is EntityProjectionExpression entityProjectionExpression
-                && Equals(entityProjectionExpression));
-
-    private bool Equals(EntityProjectionExpression entityProjectionExpression)
-        => Equals(EntityType, entityProjectionExpression.EntityType)
-            && AccessExpression.Equals(entityProjectionExpression.AccessExpression);
+    protected abstract Expression VisitObjectArrayProjection(ObjectArrayProjectionExpression objectArrayProjectionExpression);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -270,6 +198,13 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public override int GetHashCode()
-        => HashCode.Combine(EntityType, AccessExpression);
+    protected abstract Expression VisitProjection(ProjectionExpression projectionExpression);
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    protected abstract Expression VisitSelect(SelectExpression selectExpression);
 }

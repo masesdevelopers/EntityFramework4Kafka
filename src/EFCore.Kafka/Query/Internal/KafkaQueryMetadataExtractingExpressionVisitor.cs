@@ -1,7 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
-using MASES.EntityFrameworkCore.Kafka.Storage.Internal;
 
 namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 
@@ -11,9 +9,9 @@ namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class KafkaQueryContextFactory : IQueryContextFactory
+public class KafkaQueryMetadataExtractingExpressionVisitor : ExpressionVisitor
 {
-    private readonly ICosmosClientWrapper _cosmosClient;
+    private readonly KafkaQueryCompilationContext _cosmosQueryCompilationContext;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -21,25 +19,29 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public KafkaQueryContextFactory(
-        QueryContextDependencies dependencies,
-        ICosmosClientWrapper cosmosClient)
+    public KafkaQueryMetadataExtractingExpressionVisitor(KafkaQueryCompilationContext cosmosQueryCompilationContext)
     {
-        Dependencies = dependencies;
-        _cosmosClient = cosmosClient;
+        _cosmosQueryCompilationContext = cosmosQueryCompilationContext;
     }
 
     /// <summary>
-    ///     Dependencies for this service.
-    /// </summary>
-    protected virtual QueryContextDependencies Dependencies { get; }
-
-    /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual QueryContext Create()
-        => new KafkaQueryContext(Dependencies, _cosmosClient);
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
+    {
+        if (methodCallExpression.Method.IsGenericMethod
+            && methodCallExpression.Method.GetGenericMethodDefinition() == CosmosQueryableExtensions.WithPartitionKeyMethodInfo)
+        {
+            var innerQueryable = Visit(methodCallExpression.Arguments[0]);
+
+            _cosmosQueryCompilationContext.PartitionKeyFromExtension = methodCallExpression.Arguments[1].GetConstantValue<string>();
+
+            return innerQueryable;
+        }
+
+        return base.VisitMethodCall(methodCallExpression);
+    }
 }

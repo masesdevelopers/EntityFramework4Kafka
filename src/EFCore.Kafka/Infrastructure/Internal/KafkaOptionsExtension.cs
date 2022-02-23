@@ -36,6 +36,7 @@ public class KafkaOptionsExtension : IDbContextOptionsExtension
     private bool _producerByEntity = false;
     private Topology.AutoOffsetReset _autoOffsetReset;
     private DbContextOptionsExtensionInfo? _info;
+    private Func<ExecutionStrategyDependencies, IExecutionStrategy>? _executionStrategyFactory;
 
     public KafkaOptionsExtension()
     {
@@ -48,6 +49,7 @@ public class KafkaOptionsExtension : IDbContextOptionsExtension
         _bootstrapServers = copyFrom._bootstrapServers;
         _producerByEntity = copyFrom._producerByEntity;
         _autoOffsetReset = copyFrom._autoOffsetReset;
+        _executionStrategyFactory = copyFrom._executionStrategyFactory;
     }
 
     public virtual DbContextOptionsExtensionInfo Info => _info ??= new ExtensionInfo(this);
@@ -65,6 +67,13 @@ public class KafkaOptionsExtension : IDbContextOptionsExtension
     public virtual bool ProducerByEntity => _producerByEntity;
 
     public virtual Topology.AutoOffsetReset AutoOffsetReset => _autoOffsetReset!;
+
+    /// <summary>
+    ///     A factory for creating the default <see cref="IExecutionStrategy" />, or <see langword="null" /> if none has been
+    ///     configured.
+    /// </summary>
+    public virtual Func<ExecutionStrategyDependencies, IExecutionStrategy>? ExecutionStrategyFactory
+        => _executionStrategyFactory;
 
     public virtual KafkaOptionsExtension WithUseNameMatching(bool useNameMatching = true)
     {
@@ -107,6 +116,22 @@ public class KafkaOptionsExtension : IDbContextOptionsExtension
         var clone = Clone();
 
         clone._autoOffsetReset = autoOffsetReset;
+
+        return clone;
+    }
+
+    /// <summary>
+    ///     Creates a new instance with all options the same as for this instance, but with the given option changed.
+    ///     It is unusual to call this method directly. Instead use <see cref="DbContextOptionsBuilder" />.
+    /// </summary>
+    /// <param name="executionStrategyFactory">The option to change.</param>
+    /// <returns>A new instance with the option changed.</returns>
+    public virtual KafkaOptionsExtension WithExecutionStrategyFactory(
+        Func<ExecutionStrategyDependencies, IExecutionStrategy>? executionStrategyFactory)
+    {
+        var clone = Clone();
+
+        clone._executionStrategyFactory = executionStrategyFactory;
 
         return clone;
     }

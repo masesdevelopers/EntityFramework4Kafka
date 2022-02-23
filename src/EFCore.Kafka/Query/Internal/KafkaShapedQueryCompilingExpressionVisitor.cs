@@ -1,80 +1,113 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-/*
-*  Copyright 2022 MASES s.r.l.
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*  Refer to LICENSE for more information.
-*/
+using Newtonsoft.Json.Linq;
+
+#nullable disable
 
 namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public partial class KafkaShapedQueryCompilingExpressionVisitor : ShapedQueryCompilingExpressionVisitor
 {
+    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly IQuerySqlGeneratorFactory _querySqlGeneratorFactory;
     private readonly Type _contextType;
     private readonly bool _threadSafetyChecksEnabled;
+    private readonly string _partitionKeyFromExtension;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public KafkaShapedQueryCompilingExpressionVisitor(
         ShapedQueryCompilingExpressionVisitorDependencies dependencies,
-        QueryCompilationContext queryCompilationContext)
-        : base(dependencies, queryCompilationContext)
+        KafkaQueryCompilationContext cosmosQueryCompilationContext,
+        ISqlExpressionFactory sqlExpressionFactory,
+        IQuerySqlGeneratorFactory querySqlGeneratorFactory)
+        : base(dependencies, cosmosQueryCompilationContext)
     {
-        _contextType = queryCompilationContext.ContextType;
+        _sqlExpressionFactory = sqlExpressionFactory;
+        _querySqlGeneratorFactory = querySqlGeneratorFactory;
+        _contextType = cosmosQueryCompilationContext.ContextType;
         _threadSafetyChecksEnabled = dependencies.CoreSingletonOptions.AreThreadSafetyChecksEnabled;
+        _partitionKeyFromExtension = cosmosQueryCompilationContext.PartitionKeyFromExtension;
     }
 
-    protected override Expression VisitExtension(Expression extensionExpression)
-    {
-        switch (extensionExpression)
-        {
-            case KafkaTableExpression kafkaTableExpression:
-                return Expression.Call(
-                    TableMethodInfo,
-                    QueryCompilationContext.QueryContextParameter,
-                    Expression.Constant(kafkaTableExpression.EntityType));
-        }
-
-        return base.VisitExtension(extensionExpression);
-    }
-
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected override Expression VisitShapedQuery(ShapedQueryExpression shapedQueryExpression)
     {
-        var kafkaQueryExpression = (KafkaQueryExpression)shapedQueryExpression.QueryExpression;
-        kafkaQueryExpression.ApplyProjection();
+        var jObjectParameter = Expression.Parameter(typeof(JObject), "jObject");
 
-        var shaperExpression = new ShaperExpressionProcessingExpressionVisitor(
-                this, kafkaQueryExpression, QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.TrackAll)
-            .ProcessShaper(shapedQueryExpression.ShaperExpression);
-        var innerEnumerable = Visit(kafkaQueryExpression.ServerQueryExpression);
+        var shaperBody = shapedQueryExpression.ShaperExpression;
+        shaperBody = new JObjectInjectingExpressionVisitor().Visit(shaperBody);
+        shaperBody = InjectEntityMaterializers(shaperBody);
 
-        return Expression.New(
-            typeof(QueryingEnumerable<>).MakeGenericType(shaperExpression.ReturnType).GetConstructors()[0],
-            QueryCompilationContext.QueryContextParameter,
-            innerEnumerable,
-            Expression.Constant(shaperExpression.Compile()),
-            Expression.Constant(_contextType),
-            Expression.Constant(
-                QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.NoTrackingWithIdentityResolution),
-            Expression.Constant(_threadSafetyChecksEnabled));
+        switch (shapedQueryExpression.QueryExpression)
+        {
+            case SelectExpression selectExpression:
+                shaperBody = new KafkaProjectionBindingRemovingExpressionVisitor(
+                        selectExpression, jObjectParameter,
+                        QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.TrackAll)
+                    .Visit(shaperBody);
+
+                var shaperLambda = Expression.Lambda(
+                    shaperBody,
+                    QueryCompilationContext.QueryContextParameter,
+                    jObjectParameter);
+
+                return Expression.New(
+                    typeof(QueryingEnumerable<>).MakeGenericType(shaperLambda.ReturnType).GetConstructors()[0],
+                    Expression.Convert(
+                        QueryCompilationContext.QueryContextParameter,
+                        typeof(KafkaQueryContext)),
+                    Expression.Constant(_sqlExpressionFactory),
+                    Expression.Constant(_querySqlGeneratorFactory),
+                    Expression.Constant(selectExpression),
+                    Expression.Constant(shaperLambda.Compile()),
+                    Expression.Constant(_contextType),
+                    Expression.Constant(_partitionKeyFromExtension, typeof(string)),
+                    Expression.Constant(
+                        QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.NoTrackingWithIdentityResolution),
+                    Expression.Constant(_threadSafetyChecksEnabled));
+
+            case ReadItemExpression readItemExpression:
+                shaperBody = new KafkaProjectionBindingRemovingReadItemExpressionVisitor(
+                        readItemExpression, jObjectParameter,
+                        QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.TrackAll)
+                    .Visit(shaperBody);
+
+                var shaperReadItemLambda = Expression.Lambda(
+                    shaperBody,
+                    QueryCompilationContext.QueryContextParameter,
+                    jObjectParameter);
+
+                return Expression.New(
+                    typeof(ReadItemQueryingEnumerable<>).MakeGenericType(shaperReadItemLambda.ReturnType).GetConstructors()[0],
+                    Expression.Convert(
+                        QueryCompilationContext.QueryContextParameter,
+                        typeof(KafkaQueryContext)),
+                    Expression.Constant(readItemExpression),
+                    Expression.Constant(shaperReadItemLambda.Compile()),
+                    Expression.Constant(_contextType),
+                    Expression.Constant(
+                        QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.NoTrackingWithIdentityResolution),
+                    Expression.Constant(_threadSafetyChecksEnabled));
+
+            default:
+                throw new NotSupportedException(CoreStrings.UnhandledExpressionNode(shapedQueryExpression.QueryExpression));
+        }
     }
-
-    private static readonly MethodInfo TableMethodInfo
-        = typeof(KafkaShapedQueryCompilingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(Table))!;
-
-    private static IEnumerable<ValueBuffer> Table(
-        QueryContext queryContext,
-        IEntityType entityType)
-        => ((KafkaQueryContext)queryContext).GetValueBuffers(entityType);
 }
