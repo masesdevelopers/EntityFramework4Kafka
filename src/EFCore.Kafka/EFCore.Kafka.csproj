@@ -13,7 +13,6 @@
 		<Company>MASES s.r.l.</Company>
 		<Version>0.1.0.0</Version>
 		<Product>MASES.EntityFrameworkCore.Kafka</Product>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<TargetFrameworks>net6.0</TargetFrameworks>
 		<OutputPath>..\..\bin\</OutputPath>
