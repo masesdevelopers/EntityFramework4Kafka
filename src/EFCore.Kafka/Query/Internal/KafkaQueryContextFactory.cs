@@ -13,7 +13,7 @@ namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
 /// </summary>
 public class KafkaQueryContextFactory : IQueryContextFactory
 {
-    private readonly ICosmosClientWrapper _cosmosClient;
+    private readonly IKafkaCluster _kafkaCluster;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -23,10 +23,10 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     /// </summary>
     public KafkaQueryContextFactory(
         QueryContextDependencies dependencies,
-        ICosmosClientWrapper cosmosClient)
+        IKafkaCluster kafkaCluster)
     {
         Dependencies = dependencies;
-        _cosmosClient = cosmosClient;
+        _kafkaCluster = kafkaCluster;
     }
 
     /// <summary>
@@ -41,5 +41,5 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual QueryContext Create()
-        => new KafkaQueryContext(Dependencies, _cosmosClient);
+        => new KafkaQueryContext(Dependencies, _kafkaCluster);
 }

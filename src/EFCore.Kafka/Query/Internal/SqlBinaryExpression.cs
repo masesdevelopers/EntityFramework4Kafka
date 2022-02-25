@@ -39,7 +39,7 @@ public class SqlBinaryExpression : SqlExpression
         => AllowedOperators.Contains(operatorType)
             ? operatorType
             : throw new InvalidOperationException(
-                CosmosStrings.UnsupportedOperatorForSqlExpression(
+                KafkaStrings.UnsupportedOperatorForSqlExpression(
                     operatorType, typeof(SqlBinaryExpression).ShortDisplayName()));
 
     /// <summary>

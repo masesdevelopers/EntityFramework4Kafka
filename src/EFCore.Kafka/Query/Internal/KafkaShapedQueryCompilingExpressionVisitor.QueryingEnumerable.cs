@@ -56,7 +56,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
             var partitionKey = selectExpression.GetPartitionKey(cosmosQueryContext.ParameterValues);
             if (partitionKey != null && partitionKeyFromExtension != null && partitionKeyFromExtension != partitionKey)
             {
-                throw new InvalidOperationException(CosmosStrings.PartitionKeyMismatch(partitionKeyFromExtension, partitionKey));
+                throw new InvalidOperationException(KafkaStrings.PartitionKeyMismatch(partitionKeyFromExtension, partitionKey));
             }
 
             _partitionKey = partitionKey ?? partitionKeyFromExtension;
@@ -112,7 +112,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
             private readonly IDiagnosticsLogger<DbLoggerCategory.Query> _queryLogger;
             private readonly bool _standAloneStateManager;
             private readonly IConcurrencyDetector _concurrencyDetector;
-            private readonly IExceptionDetector _exceptionDetector;
+            private readonly Microsoft.EntityFrameworkCore.Storage.IExceptionDetector _exceptionDetector;
 
             private IEnumerator<JObject> _enumerator;
 

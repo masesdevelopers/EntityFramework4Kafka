@@ -13,6 +13,7 @@
 		<Company>MASES s.r.l.</Company>
 		<Version>0.1.0.0</Version>
 		<Product>MASES.EntityFrameworkCore.Kafka</Product>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<TargetFrameworks>net6.0</TargetFrameworks>
 		<OutputPath>..\..\bin\</OutputPath>
@@ -69,18 +70,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Properties\KafkaStrings.Designer.cs">
+			<DependentUpon>KafkaStrings.Designer.tt</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Properties\KafkaStrings.Designer.tt">
+			<CustomToolNamespace></CustomToolNamespace>
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>KafkaStrings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<Compile Update="Properties\KafkaStrings.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>KafkaStrings.Designer.tt</DependentUpon>
-		</Compile>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -94,9 +100,4 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" PrivateAssets="none" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
-
 </Project>

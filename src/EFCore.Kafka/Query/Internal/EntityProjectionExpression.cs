@@ -105,7 +105,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
             && !property.DeclaringEntityType.IsAssignableFrom(EntityType))
         {
             throw new InvalidOperationException(
-                CosmosStrings.UnableToBindMemberToEntityProjection("property", property.Name, EntityType.DisplayName()));
+                KafkaStrings.UnableToBindMemberToEntityProjection("property", property.Name, EntityType.DisplayName()));
         }
 
         if (!_propertyExpressionsMap.TryGetValue(property, out var expression))
@@ -139,7 +139,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
             && !navigation.DeclaringEntityType.IsAssignableFrom(EntityType))
         {
             throw new InvalidOperationException(
-                CosmosStrings.UnableToBindMemberToEntityProjection("navigation", navigation.Name, EntityType.DisplayName()));
+                KafkaStrings.UnableToBindMemberToEntityProjection("navigation", navigation.Name, EntityType.DisplayName()));
         }
 
         if (!_navigationExpressionsMap.TryGetValue(navigation, out var expression))
@@ -232,7 +232,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression, IAcc
         if (!derivedType.GetAllBaseTypes().Contains(EntityType))
         {
             throw new InvalidOperationException(
-                CosmosStrings.InvalidDerivedTypeInEntityProjection(
+                KafkaStrings.InvalidDerivedTypeInEntityProjection(
                     derivedType.DisplayName(), EntityType.DisplayName()));
         }
 

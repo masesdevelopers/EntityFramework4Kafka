@@ -984,7 +984,7 @@ public class KafkaSqlTranslatingExpressionVisitor : ExpressionVisitor
             if (extensionExpression is SqlExpression sqlExpression
                 && sqlExpression.TypeMapping == null)
             {
-                throw new InvalidOperationException(CosmosStrings.NullTypeMappingInSqlTree(sqlExpression.Print()));
+                throw new InvalidOperationException(KafkaStrings.NullTypeMappingInSqlTree(sqlExpression.Print()));
             }
 
             return base.VisitExtension(extensionExpression);

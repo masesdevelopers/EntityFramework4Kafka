@@ -701,7 +701,7 @@ public class KafkaQueryableMethodTranslatingExpressionVisitor : QueryableMethodT
         var selectExpression = (SelectExpression)source.QueryExpression;
         if (selectExpression.Orderings.Count == 0)
         {
-            AddTranslationErrorDetails(CosmosStrings.MissingOrderingInSelectExpression);
+            AddTranslationErrorDetails(KafkaStrings.MissingOrderingInSelectExpression);
             return null;
         }
 
@@ -1093,5 +1093,10 @@ public class KafkaQueryableMethodTranslatingExpressionVisitor : QueryableMethodT
         }
 
         return source.UpdateShaperExpression(shaper);
+    }
+
+    protected override ShapedQueryExpression CreateShapedQueryExpression(Type elementType)
+    {
+        throw new NotImplementedException();
     }
 }

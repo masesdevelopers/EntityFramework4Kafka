@@ -258,7 +258,7 @@ public class QuerySqlGenerator : SqlExpressionVisitor
             else
             {
                 // TODO: See Issue#18923
-                throw new InvalidOperationException(CosmosStrings.OffsetRequiresLimit);
+                throw new InvalidOperationException(KafkaStrings.OffsetRequiresLimit);
             }
         }
 
@@ -305,7 +305,7 @@ public class QuerySqlGenerator : SqlExpressionVisitor
                 throw new ArgumentOutOfRangeException(
                     nameof(fromSqlExpression),
                     fromSqlExpression.Arguments,
-                    CosmosStrings.InvalidFromSqlArguments(
+                    KafkaStrings.InvalidFromSqlArguments(
                         fromSqlExpression.Arguments.GetType(),
                         fromSqlExpression.Arguments is ConstantExpression constantExpression
                             ? constantExpression.Value?.GetType()

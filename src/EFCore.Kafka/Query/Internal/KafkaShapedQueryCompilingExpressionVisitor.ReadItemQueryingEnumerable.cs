@@ -59,7 +59,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
         {
             TryGetResourceId(out var resourceId);
             TryGetPartitionId(out var partitionKey);
-            return CosmosStrings.NoReadItemQueryString(resourceId, partitionKey);
+            return KafkaStrings.NoReadItemQueryString(resourceId, partitionKey);
         }
 
         private bool TryGetPartitionId(out string partitionKey)
@@ -95,7 +95,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
 
                 if (string.IsNullOrEmpty(resourceId))
                 {
-                    throw new InvalidOperationException(CosmosStrings.InvalidResourceId);
+                    throw new InvalidOperationException(KafkaStrings.InvalidResourceId);
                 }
 
                 return true;
@@ -210,12 +210,12 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
                         {
                             if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
                             {
-                                throw new InvalidOperationException(CosmosStrings.ResourceIdMissing);
+                                throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
                             }
 
                             if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
                             {
-                                throw new InvalidOperationException(CosmosStrings.PartitionKeyMissing);
+                                throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
                             }
 
                             EntityFrameworkEventSource.Log.QueryExecuting();
@@ -262,12 +262,12 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
                         {
                             if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
                             {
-                                throw new InvalidOperationException(CosmosStrings.ResourceIdMissing);
+                                throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
                             }
 
                             if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
                             {
-                                throw new InvalidOperationException(CosmosStrings.PartitionKeyMissing);
+                                throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
                             }
 
                             EntityFrameworkEventSource.Log.QueryExecuting();

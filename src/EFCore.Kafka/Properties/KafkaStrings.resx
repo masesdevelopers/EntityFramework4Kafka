@@ -126,6 +126,9 @@
   <data name="InvalidDerivedTypeInEntityProjection" xml:space="preserve">
     <value>The specified entity type '{derivedType}' is not derived from '{entityType}'.</value>
   </data>
+  <data name="InvalidFromSqlArguments" xml:space="preserve">
+    <value>A FromSqlExpression has an invalid arguments expression type '{expressionType}' or value type '{valueType}'.</value>
+  </data>
   <data name="LogSavedChanges" xml:space="preserve">
     <value>Saved {count} entities to Kafka store.</value>
     <comment>Information KafkaEventId.ChangesSaved int</comment>
@@ -134,8 +137,20 @@
     <value>Transactions are not supported by the Kafka store. See http://go.microsoft.com/fwlink/?LinkId=800142</value>
     <comment>Warning KafkaEventId.TransactionIgnoredWarning</comment>
   </data>
+  <data name="MissingOrderingInSelectExpression" xml:space="preserve">
+    <value>'Reverse' could not be translated to the server because there is no ordering on the server side.</value>
+  </data>
+  <data name="NavigationPropertyIsNotAnEmbeddedEntity" xml:space="preserve">
+    <value>Navigation '{entityType}.{navigationName}' doesn't point to an embedded entity.</value>
+  </data>
+  <data name="NonEmbeddedIncludeNotSupported" xml:space="preserve">
+    <value>Including navigation '{navigation}' is not supported as the navigation is not embedded in same resource.</value>
+  </data>
   <data name="NoQueryStrings" xml:space="preserve">
     <value>There is no query string because the Kafka provider does not use a string-based query language.</value>
+  </data>
+  <data name="NoReadItemQueryString" xml:space="preserve">
+    <value>There is no string-based representation of this query as it's executed using 'ReadItemQueryAsync({resourceId}, {partitionKey})'.</value>
   </data>
   <data name="NullabilityErrorException" xml:space="preserve">
     <value>Required properties '{requiredProperties}' are missing for the instance of entity type '{entityType}'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the entity key value.</value>
@@ -143,11 +158,32 @@
   <data name="NullabilityErrorExceptionSensitive" xml:space="preserve">
     <value>Required properties '{requiredProperties}' are missing for the instance of entity type '{entityType}' with the key value '{keyValue}'.</value>
   </data>
+  <data name="NullTypeMappingInSqlTree" xml:space="preserve">
+    <value>The expression '{sqlExpression}' in the SQL tree does not have a type mapping assigned.</value>
+  </data>
+  <data name="OffsetRequiresLimit" xml:space="preserve">
+    <value>Cosmos SQL does not allow Offset without Limit. Consider specifying a 'Take' operation on the query.</value>
+  </data>
+  <data name="PartitionKeyMismatch" xml:space="preserve">
+    <value>The partition key specified in the 'WithPartitionKey' call '{partitionKey1}' and the partition key specified in the 'Where' predicate '{partitionKey2}' must be identical to return any results. Remove one of them.</value>
+  </data>
+  <data name="PartitionKeyMissing" xml:space="preserve">
+    <value>Unable to execute a 'ReadItem' query since the partition key value is missing. Consider using the 'WithPartitionKey' method on the query to specify partition key to use.</value>
+  </data>
+  <data name="ResourceIdMissing" xml:space="preserve">
+    <value>Unable to execute a 'ReadItem' query since the 'id' value is missing and cannot be generated.</value>
+  </data>
+  <data name="ReverseAfterSkipTakeNotSupported" xml:space="preserve">
+    <value>Reversing the ordering is not supported when limit or offset are already applied.</value>
+  </data>
   <data name="SetOperationsNotAllowedAfterClientEvaluation" xml:space="preserve">
     <value>Unable to translate set operation after client projection has been applied. Consider moving the set operation before the last 'Select' call.</value>
   </data>
   <data name="UnableToBindMemberToEntityProjection" xml:space="preserve">
     <value>Unable to bind '{memberType}' '{member}' to entity projection of '{entityType}'.</value>
+  </data>
+  <data name="UnsupportedOperatorForSqlExpression" xml:space="preserve">
+    <value>Unsupported operator '{nodeType}' specified for expression of type '{expressionType}'.</value>
   </data>
   <data name="UpdateConcurrencyException" xml:space="preserve">
     <value>Attempted to update or delete an entity that does not exist in the store.</value>
@@ -157,5 +193,8 @@
   </data>
   <data name="UpdateConcurrencyTokenExceptionSensitive" xml:space="preserve">
     <value>Conflicts were detected for instance of entity type '{entityType}' with the key value '{keyValue}' on the concurrency token property values {conflictingValues}, with corresponding database values {databaseValues}.</value>
+  </data>
+  <data name="VisitChildrenMustBeOverridden" xml:space="preserve">
+    <value>'VisitChildren' must be overridden in the class deriving from 'SqlExpression'.</value>
   </data>
 </root>

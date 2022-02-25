@@ -33,7 +33,7 @@ public class ObjectArrayProjectionExpression : Expression, IPrintableExpression,
         if (Name == null)
         {
             throw new InvalidOperationException(
-                CosmosStrings.NavigationPropertyIsNotAnEmbeddedEntity(
+                KafkaStrings.NavigationPropertyIsNotAnEmbeddedEntity(
                     navigation.DeclaringEntityType.DisplayName(), navigation.Name));
         }
 

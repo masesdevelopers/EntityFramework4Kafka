@@ -398,7 +398,7 @@ public class SelectExpression : Expression
         if (Limit != null
             || Offset != null)
         {
-            throw new InvalidOperationException(CosmosStrings.ReverseAfterSkipTakeNotSupported);
+            throw new InvalidOperationException(KafkaStrings.ReverseAfterSkipTakeNotSupported);
         }
 
         var existingOrderings = _orderings.ToArray();

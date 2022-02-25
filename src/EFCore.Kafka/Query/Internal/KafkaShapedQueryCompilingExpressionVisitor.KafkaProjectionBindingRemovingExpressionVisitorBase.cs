@@ -203,7 +203,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
                         || navigation.ForeignKey.DeclaringEntityType.IsDocumentRoot())
                     {
                         throw new InvalidOperationException(
-                            CosmosStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
+                            KafkaStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
                     }
 
                     _pendingIncludes.Add(includeExpression);
@@ -284,7 +284,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
                         || navigation.ForeignKey.DeclaringEntityType.IsDocumentRoot())
                     {
                         throw new InvalidOperationException(
-                            CosmosStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
+                            KafkaStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
                     }
 
                     var isFirstInclude = _pendingIncludes.Count == 0;

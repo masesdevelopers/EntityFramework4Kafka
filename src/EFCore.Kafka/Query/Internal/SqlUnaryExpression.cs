@@ -24,7 +24,7 @@ public class SqlUnaryExpression : SqlExpression
         => AllowedOperators.Contains(operatorType)
             ? operatorType
             : throw new InvalidOperationException(
-                CosmosStrings.UnsupportedOperatorForSqlExpression(
+                KafkaStrings.UnsupportedOperatorForSqlExpression(
                     operatorType, typeof(SqlUnaryExpression).ShortDisplayName()));
 
     /// <summary>

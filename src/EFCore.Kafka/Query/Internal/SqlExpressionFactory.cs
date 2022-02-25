@@ -132,7 +132,7 @@ public class SqlExpressionFactory : ISqlExpressionFactory
 
             default:
                 throw new InvalidOperationException(
-                    CosmosStrings.UnsupportedOperatorForSqlExpression(
+                    KafkaStrings.UnsupportedOperatorForSqlExpression(
                         sqlUnaryExpression.OperatorType, typeof(SqlUnaryExpression).ShortDisplayName()));
         }
 
@@ -195,7 +195,7 @@ public class SqlExpressionFactory : ISqlExpressionFactory
 
             default:
                 throw new InvalidOperationException(
-                    CosmosStrings.UnsupportedOperatorForSqlExpression(
+                    KafkaStrings.UnsupportedOperatorForSqlExpression(
                         sqlBinaryExpression.OperatorType, typeof(SqlBinaryExpression).ShortDisplayName()));
         }
 

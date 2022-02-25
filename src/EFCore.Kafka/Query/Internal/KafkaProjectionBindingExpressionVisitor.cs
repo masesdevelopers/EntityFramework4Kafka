@@ -235,7 +235,7 @@ public class KafkaProjectionBindingExpressionVisitor : ExpressionVisitor
                         && includableNavigation.IsEmbedded()))
                 {
                     throw new InvalidOperationException(
-                        CosmosStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
+                        KafkaStrings.NonEmbeddedIncludeNotSupported(includeExpression.Navigation));
                 }
 
                 _includedNavigations.Push(includableNavigation);

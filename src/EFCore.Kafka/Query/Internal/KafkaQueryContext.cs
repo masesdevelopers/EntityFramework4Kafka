@@ -21,10 +21,10 @@ public class KafkaQueryContext : QueryContext
     /// </summary>
     public KafkaQueryContext(
         QueryContextDependencies dependencies,
-        ICosmosClientWrapper cosmosClient)
+        IKafkaCluster kafkaCluster)
         : base(dependencies)
     {
-        CosmosClient = cosmosClient;
+        KafkaCluster = kafkaCluster;
     }
 
     /// <summary>
@@ -33,5 +33,5 @@ public class KafkaQueryContext : QueryContext
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual ICosmosClientWrapper CosmosClient { get; }
+    public virtual IKafkaCluster KafkaCluster { get; }
 }
