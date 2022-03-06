@@ -52,6 +52,12 @@ namespace MASES.EntityFrameworkCore.Kafka.Internal
                 expressionType, valueType);
 
         /// <summary>
+        ///     Unable to generate a valid 'id' value to execute a 'ReadItem' query. This usually happens when the value provided for one of the properties is 'null' or an empty string. Please supply a value that's not 'null' or an empty string.
+        /// </summary>
+        public static string InvalidResourceId
+            => GetString("InvalidResourceId");
+
+        /// <summary>
         ///     'Reverse' could not be translated to the server because there is no ordering on the server side.
         /// </summary>
         public static string MissingOrderingInSelectExpression
