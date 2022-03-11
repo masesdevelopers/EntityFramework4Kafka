@@ -170,7 +170,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
         {
             var method = methodCallExpression.Method;
             var genericMethod = method.IsGenericMethod ? method.GetGenericMethodDefinition() : null;
-            if (genericMethod == EntityFrameworkCore.Infrastructure.ExpressionExtensions.ValueBufferTryReadValueMethod)
+            if (genericMethod == Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions.ValueBufferTryReadValueMethod)
             {
                 var property = methodCallExpression.Arguments[2].GetConstantValue<IProperty>();
                 Expression innerExpression;
