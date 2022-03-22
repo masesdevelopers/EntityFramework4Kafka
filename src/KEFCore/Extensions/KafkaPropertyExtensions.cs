@@ -2,11 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 // ReSharper disable once CheckNamespace
-namespace MASES.EntityFrameworkCore.Kafka
+namespace MASES.EntityFrameworkCore.KNet
 {
     /// <summary>
     ///     Property extension methods for Cosmos metadata.

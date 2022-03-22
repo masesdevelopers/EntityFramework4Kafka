@@ -1,9 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
 
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that configures store value generation as <see cref="ValueGenerated.OnAdd" /> on properties that are

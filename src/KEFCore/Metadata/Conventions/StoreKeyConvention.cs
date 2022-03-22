@@ -1,13 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using MASES.EntityFrameworkCore.Kafka;
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
-using MASES.EntityFrameworkCore.Kafka.ValueGeneration;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
+using MASES.EntityFrameworkCore.KNet;
+using MASES.EntityFrameworkCore.KNet.ValueGeneration;
 using Newtonsoft.Json.Linq;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that adds the 'id' property - a key required by Azure Cosmos.

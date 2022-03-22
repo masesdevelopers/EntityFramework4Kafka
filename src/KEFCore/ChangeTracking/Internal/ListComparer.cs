@@ -1,9 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics.CodeAnalysis;
-
-namespace MASES.EntityFrameworkCore.Kafka.ChangeTracking.Internal;
+namespace MASES.EntityFrameworkCore.KNet.ChangeTracking.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -11,7 +9,8 @@ namespace MASES.EntityFrameworkCore.Kafka.ChangeTracking.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public sealed class SingleDimensionalArrayComparer<TElement> : ValueComparer<TElement[]>
+public sealed class ListComparer<TElement, TCollection> : ValueComparer<TCollection>
+    where TCollection : class, IEnumerable<TElement>
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -19,11 +18,11 @@ public sealed class SingleDimensionalArrayComparer<TElement> : ValueComparer<TEl
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public SingleDimensionalArrayComparer(ValueComparer elementComparer)
+    public ListComparer(ValueComparer elementComparer, bool readOnly)
         : base(
             (a, b) => Compare(a, b, (ValueComparer<TElement>)elementComparer),
             o => GetHashCode(o, (ValueComparer<TElement>)elementComparer),
-            source => Snapshot(source, (ValueComparer<TElement>)elementComparer))
+            source => Snapshot(source, (ValueComparer<TElement>)elementComparer, readOnly))
     {
     }
 
@@ -34,28 +33,28 @@ public sealed class SingleDimensionalArrayComparer<TElement> : ValueComparer<TEl
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public override Type Type
-        => typeof(TElement[]);
+        => typeof(TCollection);
 
-    private static bool Compare(TElement[]? a, TElement[]? b, ValueComparer<TElement> elementComparer)
+    private static bool Compare(TCollection? a, TCollection? b, ValueComparer<TElement> elementComparer)
     {
-        if (a is null)
+        if (a is not IReadOnlyList<TElement> aList)
         {
-            return b is null;
+            return b is not IReadOnlyList<TElement>;
         }
 
-        if (b is null || a.Length != b.Length)
+        if (b is not IReadOnlyList<TElement> bList || aList.Count != bList.Count)
         {
             return false;
         }
 
-        if (ReferenceEquals(a, b))
+        if (ReferenceEquals(aList, bList))
         {
             return true;
         }
 
-        for (var i = 0; i < a.Length; i++)
+        for (var i = 0; i < aList.Count; i++)
         {
-            if (!elementComparer.Equals(a[i], b[i]))
+            if (!elementComparer.Equals(aList[i], bList[i]))
             {
                 return false;
             }
@@ -64,7 +63,7 @@ public sealed class SingleDimensionalArrayComparer<TElement> : ValueComparer<TEl
         return true;
     }
 
-    private static int GetHashCode(TElement[] source, ValueComparer<TElement> elementComparer)
+    private static int GetHashCode(TCollection source, ValueComparer<TElement> elementComparer)
     {
         var hash = new HashCode();
         foreach (var el in source)
@@ -75,15 +74,19 @@ public sealed class SingleDimensionalArrayComparer<TElement> : ValueComparer<TEl
         return hash.ToHashCode();
     }
 
-    private static TElement[] Snapshot(TElement[] source, ValueComparer<TElement> elementComparer)
+    private static TCollection Snapshot(TCollection source, ValueComparer<TElement> elementComparer, bool readOnly)
     {
-        var snapshot = new TElement[source.Length];
-        for (var i = 0; i < source.Length; i++)
+        if (readOnly)
         {
-            var element = source[i];
-            snapshot[i] = element is null ? default! : elementComparer.Snapshot(element);
+            return source;
         }
 
-        return snapshot;
+        var snapshot = new List<TElement>(((IReadOnlyList<TElement>)source).Count);
+        foreach (var e in source)
+        {
+            snapshot.Add(e is null ? default! : elementComparer.Snapshot(e));
+        }
+
+        return (TCollection)(object)snapshot;
     }
 }

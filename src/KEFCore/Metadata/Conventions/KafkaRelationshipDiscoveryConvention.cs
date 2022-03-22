@@ -4,7 +4,7 @@
 
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that configures relationships between entity types based on the navigation properties

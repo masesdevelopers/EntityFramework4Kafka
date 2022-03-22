@@ -3,13 +3,13 @@
 
 using System.Collections;
 using System.Text;
-using MASES.EntityFrameworkCore.Kafka.Internal;
-using MASES.EntityFrameworkCore.Kafka.Storage.Internal;
+using MASES.EntityFrameworkCore.KNet.Internal;
+using MASES.EntityFrameworkCore.KNet.Storage.Internal;
 using Newtonsoft.Json.Linq;
 
 #nullable disable
 
-namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
+namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

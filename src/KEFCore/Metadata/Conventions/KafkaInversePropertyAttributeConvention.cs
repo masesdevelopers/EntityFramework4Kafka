@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that configures the inverse navigation property based on the <see cref="InversePropertyAttribute" />

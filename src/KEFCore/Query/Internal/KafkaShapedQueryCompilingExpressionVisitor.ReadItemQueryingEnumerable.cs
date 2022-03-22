@@ -3,13 +3,14 @@
 
 using System.Collections;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using MASES.EntityFrameworkCore.Kafka.Internal;
+using MASES.EntityFrameworkCore.KNet.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json.Linq;
+using MASES.EntityFrameworkCore.Metadata.Conventions;
 
 #nullable disable
 
-namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
+namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

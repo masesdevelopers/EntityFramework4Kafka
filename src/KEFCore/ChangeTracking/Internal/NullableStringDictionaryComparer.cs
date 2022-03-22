@@ -1,9 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics.CodeAnalysis;
-
-namespace MASES.EntityFrameworkCore.Kafka.ChangeTracking.Internal;
+namespace MASES.EntityFrameworkCore.KNet.ChangeTracking.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -11,7 +9,8 @@ namespace MASES.EntityFrameworkCore.Kafka.ChangeTracking.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public sealed class NullableSingleDimensionalArrayComparer<TElement> : ValueComparer<TElement?[]>
+public sealed class NullableStringDictionaryComparer<TElement, TCollection> : ValueComparer<TCollection>
+    where TCollection : class, IEnumerable<KeyValuePair<string, TElement?>>
     where TElement : struct
 {
     /// <summary>
@@ -20,11 +19,11 @@ public sealed class NullableSingleDimensionalArrayComparer<TElement> : ValueComp
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public NullableSingleDimensionalArrayComparer(ValueComparer elementComparer)
+    public NullableStringDictionaryComparer(ValueComparer elementComparer, bool readOnly)
         : base(
             (a, b) => Compare(a, b, (ValueComparer<TElement>)elementComparer),
             o => GetHashCode(o, (ValueComparer<TElement>)elementComparer),
-            source => Snapshot(source, (ValueComparer<TElement>)elementComparer))
+            source => Snapshot(source, (ValueComparer<TElement>)elementComparer, readOnly))
     {
     }
 
@@ -35,31 +34,35 @@ public sealed class NullableSingleDimensionalArrayComparer<TElement> : ValueComp
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public override Type Type
-        => typeof(TElement?[]);
+        => typeof(TCollection);
 
-    private static bool Compare(TElement?[]? a, TElement?[]? b, ValueComparer<TElement> elementComparer)
+    private static bool Compare(TCollection? a, TCollection? b, ValueComparer<TElement> elementComparer)
     {
-        if (a is null)
+        if (a is not IReadOnlyDictionary<string, TElement?> aDict)
         {
-            return b is null;
+            return b is not IReadOnlyDictionary<string, TElement?>;
         }
 
-        if (b is null || a.Length != b.Length)
+        if (b is not IReadOnlyDictionary<string, TElement?> bDict || aDict.Count != bDict.Count)
         {
             return false;
         }
 
-        if (ReferenceEquals(a, b))
+        if (ReferenceEquals(aDict, bDict))
         {
             return true;
         }
 
-        for (var i = 0; i < a.Length; i++)
+        foreach (var (key, element) in aDict)
         {
-            var (aElement, bElement) = (a[i], b[i]);
-            if (aElement is null)
+            if (!bDict.TryGetValue(key, out var bValue))
             {
-                if (bElement is null)
+                return false;
+            }
+
+            if (element is null)
+            {
+                if (bValue is null)
                 {
                     continue;
                 }
@@ -67,7 +70,7 @@ public sealed class NullableSingleDimensionalArrayComparer<TElement> : ValueComp
                 return false;
             }
 
-            if (bElement is null || !elementComparer.Equals(aElement, bElement))
+            if (bValue is null || !elementComparer.Equals(element, bValue))
             {
                 return false;
             }
@@ -76,26 +79,32 @@ public sealed class NullableSingleDimensionalArrayComparer<TElement> : ValueComp
         return true;
     }
 
-    private static int GetHashCode(TElement?[] source, ValueComparer<TElement> elementComparer)
+    private static int GetHashCode(TCollection source, ValueComparer<TElement> elementComparer)
     {
         var nullableEqualityComparer = new NullableEqualityComparer<TElement>(elementComparer);
         var hash = new HashCode();
-        foreach (var el in source)
+        foreach (var (key, element) in source)
         {
-            hash.Add(el, nullableEqualityComparer);
+            hash.Add(key);
+            hash.Add(element, nullableEqualityComparer);
         }
 
         return hash.ToHashCode();
     }
 
-    private static TElement?[] Snapshot(TElement?[] source, ValueComparer<TElement> elementComparer)
+    private static TCollection Snapshot(TCollection source, ValueComparer<TElement> elementComparer, bool readOnly)
     {
-        var snapshot = new TElement?[source.Length];
-        for (var i = 0; i < source.Length; i++)
+        if (readOnly)
         {
-            snapshot[i] = source[i] is { } value ? elementComparer.Snapshot(value) : null;
+            return source;
         }
 
-        return snapshot;
+        var snapshot = new Dictionary<string, TElement?>(((IReadOnlyDictionary<string, TElement?>)source).Count);
+        foreach (var (key, element) in source)
+        {
+            snapshot.Add(key, element is null ? null : elementComparer.Snapshot(element.Value));
+        }
+
+        return (TCollection)(object)snapshot;
     }
 }

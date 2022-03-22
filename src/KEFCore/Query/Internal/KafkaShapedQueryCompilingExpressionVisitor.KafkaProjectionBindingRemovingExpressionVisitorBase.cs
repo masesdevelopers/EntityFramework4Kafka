@@ -2,15 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using MASES.EntityFrameworkCore.Kafka.Internal;
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
-using MASES.EntityFrameworkCore.Kafka.Storage.Internal;
+using MASES.EntityFrameworkCore.KNet.Internal;
+using MASES.EntityFrameworkCore.KNet.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json.Linq;
+using MASES.EntityFrameworkCore.Metadata.Conventions;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
 
 #nullable disable
 
-namespace MASES.EntityFrameworkCore.Kafka.Query.Internal;
+namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
 
 public partial class KafkaShapedQueryCompilingExpressionVisitor
 {

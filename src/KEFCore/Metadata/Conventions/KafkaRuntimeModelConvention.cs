@@ -1,11 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
-
 #nullable enable
 
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
+
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that creates an optimized copy of the mutable model. This convention is typically

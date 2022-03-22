@@ -2,8 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using JetBrains.Annotations;
-using MASES.EntityFrameworkCore.Kafka.Internal;
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
+using MASES.EntityFrameworkCore.KNet.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
 #nullable disable

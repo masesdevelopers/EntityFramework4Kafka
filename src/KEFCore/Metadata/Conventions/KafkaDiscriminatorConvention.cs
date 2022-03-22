@@ -1,10 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using MASES.EntityFrameworkCore.Kafka.Metadata.Internal;
-
 // ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using MASES.EntityFrameworkCore.KNet.Metadata.Internal;
+
+namespace MASES.EntityFrameworkCore.Metadata.Conventions;
 
 /// <summary>
 ///     A convention that configures the discriminator value for entity types as the entity type name.
