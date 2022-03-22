@@ -1,13 +1,13 @@
-# EFCoreKafka usage
+# KEFCore usage
 
 > NOTE: you need a working Apache Kafka cluster to use this provider.
 
 ### Installation
 
-EF Core for Apache Kafka is available on [NuGet](https://www.nuget.org/packages/MASES.EntityFrameworkCore.Kafka):
+EF Core for Apache Kafka is available on [NuGet](https://www.nuget.org/packages/MASES.EntityFrameworkCore.KNet):
 
 ```sh
-dotnet add package MASES.EntityFrameworkCore.Kafka
+dotnet add package MASES.EntityFrameworkCore.KNet
 ```
 
 ### Basic usage
