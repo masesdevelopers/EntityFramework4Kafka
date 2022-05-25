@@ -76,7 +76,7 @@ public class QuerySqlGenerator : SqlExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual CosmosSqlQuery GetSqlQuery(
+    public virtual KafkaSqlQuery GetSqlQuery(
         SelectExpression selectExpression,
         IReadOnlyDictionary<string, object> parameterValues)
     {
@@ -87,7 +87,7 @@ public class QuerySqlGenerator : SqlExpressionVisitor
 
         Visit(selectExpression);
 
-        return new CosmosSqlQuery(_sqlBuilder.ToString(), _sqlParameters);
+        return new KafkaSqlQuery(_sqlBuilder.ToString(), _sqlParameters);
     }
 
     /// <summary>
@@ -457,7 +457,7 @@ public class QuerySqlGenerator : SqlExpressionVisitor
 
         return value == null
             ? null
-            : (value as JToken) ?? JToken.FromObject(value, CosmosClientWrapper.Serializer);
+            : (value as JToken) ?? JToken.FromObject(value, KafkaCluster.Serializer);
     }
 
     /// <summary>

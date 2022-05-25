@@ -21,10 +21,10 @@ public class KafkaQueryTranslationPreprocessor : QueryTranslationPreprocessor
     /// </summary>
     public KafkaQueryTranslationPreprocessor(
         QueryTranslationPreprocessorDependencies dependencies,
-        KafkaQueryCompilationContext cosmosQueryCompilationContext)
-        : base(dependencies, cosmosQueryCompilationContext)
+        KafkaQueryCompilationContext kafkaQueryCompilationContext)
+        : base(dependencies, kafkaQueryCompilationContext)
     {
-        _queryCompilationContext = cosmosQueryCompilationContext;
+        _queryCompilationContext = kafkaQueryCompilationContext;
     }
 
     /// <summary>

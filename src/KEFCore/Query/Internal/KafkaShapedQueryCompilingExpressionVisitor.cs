@@ -29,16 +29,16 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor : ShapedQueryCom
     /// </summary>
     public KafkaShapedQueryCompilingExpressionVisitor(
         ShapedQueryCompilingExpressionVisitorDependencies dependencies,
-        KafkaQueryCompilationContext cosmosQueryCompilationContext,
+        KafkaQueryCompilationContext kafkaQueryCompilationContext,
         ISqlExpressionFactory sqlExpressionFactory,
         IQuerySqlGeneratorFactory querySqlGeneratorFactory)
-        : base(dependencies, cosmosQueryCompilationContext)
+        : base(dependencies, kafkaQueryCompilationContext)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
         _querySqlGeneratorFactory = querySqlGeneratorFactory;
-        _contextType = cosmosQueryCompilationContext.ContextType;
+        _contextType = kafkaQueryCompilationContext.ContextType;
         _threadSafetyChecksEnabled = dependencies.CoreSingletonOptions.AreThreadSafetyChecksEnabled;
-        _partitionKeyFromExtension = cosmosQueryCompilationContext.PartitionKeyFromExtension;
+        _partitionKeyFromExtension = kafkaQueryCompilationContext.PartitionKeyFromExtension;
     }
 
     /// <summary>

@@ -10,331 +10,316 @@ using MASES.EntityFrameworkCore.Metadata.Conventions;
 
 #nullable disable
 
-namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
-
-/// <summary>
-///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-///     any release. You should only use it directly in your code with extreme caution and knowing that
-///     doing so can result in application failures when updating to a new Entity Framework Core release.
-/// </summary>
-public partial class KafkaShapedQueryCompilingExpressionVisitor
+namespace MASES.EntityFrameworkCore.KNet.Query.Internal
 {
-    private sealed class ReadItemQueryingEnumerable<T> : IEnumerable<T>, IAsyncEnumerable<T>, IQueryingEnumerable
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public partial class KafkaShapedQueryCompilingExpressionVisitor
     {
-        private readonly KafkaQueryContext _cosmosQueryContext;
-        private readonly ReadItemExpression _readItemExpression;
-        private readonly Func<KafkaQueryContext, JObject, T> _shaper;
-        private readonly Type _contextType;
-        private readonly IDiagnosticsLogger<DbLoggerCategory.Query> _queryLogger;
-        private readonly bool _standAloneStateManager;
-        private readonly bool _threadSafetyChecksEnabled;
-
-        public ReadItemQueryingEnumerable(
-            KafkaQueryContext cosmosQueryContext,
-            ReadItemExpression readItemExpression,
-            Func<KafkaQueryContext, JObject, T> shaper,
-            Type contextType,
-            bool standAloneStateManager,
-            bool threadSafetyChecksEnabled)
+        private sealed class ReadItemQueryingEnumerable<T> : IEnumerable<T>, IAsyncEnumerable<T>, IQueryingEnumerable
         {
-            _cosmosQueryContext = cosmosQueryContext;
-            _readItemExpression = readItemExpression;
-            _shaper = shaper;
-            _contextType = contextType;
-            _queryLogger = _cosmosQueryContext.QueryLogger;
-            _standAloneStateManager = standAloneStateManager;
-            _threadSafetyChecksEnabled = threadSafetyChecksEnabled;
-        }
-
-        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            => new Enumerator(this, cancellationToken);
-
-        public IEnumerator<T> GetEnumerator()
-            => new Enumerator(this);
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => GetEnumerator();
-
-        public string ToQueryString()
-        {
-            TryGetResourceId(out var resourceId);
-            TryGetPartitionId(out var partitionKey);
-            return KafkaStrings.NoReadItemQueryString(resourceId, partitionKey);
-        }
-
-        private bool TryGetPartitionId(out string partitionKey)
-        {
-            partitionKey = null;
-
-            var partitionKeyPropertyName = _readItemExpression.EntityType.GetPartitionKeyPropertyName();
-            if (partitionKeyPropertyName == null)
-            {
-                return true;
-            }
-
-            var partitionKeyProperty = _readItemExpression.EntityType.FindProperty(partitionKeyPropertyName);
-
-            if (TryGetParameterValue(partitionKeyProperty, out var value))
-            {
-                partitionKey = GetString(partitionKeyProperty, value);
-
-                return !string.IsNullOrEmpty(partitionKey);
-            }
-
-            return false;
-        }
-
-        private bool TryGetResourceId(out string resourceId)
-        {
-            var idProperty = _readItemExpression.EntityType.GetProperties()
-                .FirstOrDefault(p => p.GetJsonPropertyName() == StoreKeyConvention.IdPropertyJsonName);
-
-            if (TryGetParameterValue(idProperty, out var value))
-            {
-                resourceId = GetString(idProperty, value);
-
-                if (string.IsNullOrEmpty(resourceId))
-                {
-                    throw new InvalidOperationException(KafkaStrings.InvalidResourceId);
-                }
-
-                return true;
-            }
-
-            if (TryGenerateIdFromKeys(idProperty, out var generatedValue))
-            {
-                resourceId = GetString(idProperty, generatedValue);
-
-                return true;
-            }
-
-            resourceId = null;
-            return false;
-        }
-
-        private bool TryGetParameterValue(IProperty property, out object value)
-        {
-            value = null;
-            return _readItemExpression.PropertyParameters.TryGetValue(property, out var parameterName)
-                && _cosmosQueryContext.ParameterValues.TryGetValue(parameterName, out value);
-        }
-
-        private static string GetString(IProperty property, object value)
-        {
-            var converter = property.GetTypeMapping().Converter;
-
-            return converter is null
-                ? (string)value
-                : (string)converter.ConvertToProvider(value);
-        }
-
-        private bool TryGenerateIdFromKeys(IProperty idProperty, out object value)
-        {
-            var entityEntry = Activator.CreateInstance(_readItemExpression.EntityType.ClrType);
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-            var internalEntityEntry = new InternalEntityEntry(
-                _cosmosQueryContext.Context.GetDependencies().StateManager, _readItemExpression.EntityType, entityEntry);
-#pragma warning restore EF1001 // Internal EF Core API usage.
-
-            foreach (var keyProperty in _readItemExpression.EntityType.FindPrimaryKey().Properties)
-            {
-                var property = _readItemExpression.EntityType.FindProperty(keyProperty.Name);
-
-                if (TryGetParameterValue(property, out var parameterValue))
-                {
-#pragma warning disable EF1001 // Internal EF Core API usage.
-                    internalEntityEntry[property] = parameterValue;
-#pragma warning restore EF1001 // Internal EF Core API usage.
-                }
-            }
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-            internalEntityEntry.SetEntityState(EntityState.Added);
-
-            value = internalEntityEntry[idProperty];
-
-            internalEntityEntry.SetEntityState(EntityState.Detached);
-#pragma warning restore EF1001 // Internal EF Core API usage.
-
-            return value != null;
-        }
-
-        private sealed class Enumerator : IEnumerator<T>, IAsyncEnumerator<T>
-        {
-            private readonly KafkaQueryContext _cosmosQueryContext;
+            private readonly KafkaQueryContext _kafkaQueryContext;
             private readonly ReadItemExpression _readItemExpression;
             private readonly Func<KafkaQueryContext, JObject, T> _shaper;
             private readonly Type _contextType;
             private readonly IDiagnosticsLogger<DbLoggerCategory.Query> _queryLogger;
             private readonly bool _standAloneStateManager;
-            private readonly IConcurrencyDetector _concurrencyDetector;
-            private readonly IExceptionDetector _exceptionDetector;
-            private readonly ReadItemQueryingEnumerable<T> _readItemEnumerable;
-            private readonly CancellationToken _cancellationToken;
+            private readonly bool _threadSafetyChecksEnabled;
 
-            private JObject _item;
-            private bool _hasExecuted;
-
-            public Enumerator(ReadItemQueryingEnumerable<T> readItemEnumerable, CancellationToken cancellationToken = default)
+            public ReadItemQueryingEnumerable(
+                KafkaQueryContext kafkaQueryContext,
+                ReadItemExpression readItemExpression,
+                Func<KafkaQueryContext, JObject, T> shaper,
+                Type contextType,
+                bool standAloneStateManager,
+                bool threadSafetyChecksEnabled)
             {
-                _cosmosQueryContext = readItemEnumerable._cosmosQueryContext;
-                _readItemExpression = readItemEnumerable._readItemExpression;
-                _shaper = readItemEnumerable._shaper;
-                _contextType = readItemEnumerable._contextType;
-                _queryLogger = readItemEnumerable._queryLogger;
-                _standAloneStateManager = readItemEnumerable._standAloneStateManager;
-                _exceptionDetector = _cosmosQueryContext.ExceptionDetector;
-                _readItemEnumerable = readItemEnumerable;
-                _cancellationToken = cancellationToken;
-
-                _concurrencyDetector = readItemEnumerable._threadSafetyChecksEnabled
-                    ? _cosmosQueryContext.ConcurrencyDetector
-                    : null;
+                _kafkaQueryContext = kafkaQueryContext;
+                _readItemExpression = readItemExpression;
+                _shaper = shaper;
+                _contextType = contextType;
+                _queryLogger = _kafkaQueryContext.QueryLogger;
+                _standAloneStateManager = standAloneStateManager;
+                _threadSafetyChecksEnabled = threadSafetyChecksEnabled;
             }
 
-            object IEnumerator.Current
-                => Current;
+            public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+                => new Enumerator(this, cancellationToken);
 
-            public T Current { get; private set; }
+            public IEnumerator<T> GetEnumerator()
+                => new Enumerator(this);
 
-            public bool MoveNext()
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
+
+            public string ToQueryString()
             {
-                try
-                {
-                    _concurrencyDetector?.EnterCriticalSection();
-
-                    try
-                    {
-                        if (!_hasExecuted)
-                        {
-                            if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
-                            {
-                                throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
-                            }
-
-                            if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
-                            {
-                                throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
-                            }
-
-                            EntityFrameworkEventSource.Log.QueryExecuting();
-
-                            _item = _cosmosQueryContext.CosmosClient.ExecuteReadItem(
-                                _readItemExpression.Container,
-                                partitionKey,
-                                resourceId);
-
-                            return ShapeResult();
-                        }
-
-                        return false;
-                    }
-                    finally
-                    {
-                        _concurrencyDetector?.ExitCriticalSection();
-                    }
-                }
-                catch (Exception exception)
-                {
-                    if (_exceptionDetector.IsCancellation(exception))
-                    {
-                        _queryLogger.QueryCanceled(_contextType);
-                    }
-                    else
-                    {
-                        _queryLogger.QueryIterationFailed(_contextType, exception);
-                    }
-
-                    throw;
-                }
+                TryGetResourceId(out var resourceId);
+                TryGetPartitionId(out var partitionKey);
+                return KafkaStrings.NoReadItemQueryString(resourceId, partitionKey);
             }
 
-            public async ValueTask<bool> MoveNextAsync()
+            private bool TryGetPartitionId(out string partitionKey)
             {
-                try
-                {
-                    _concurrencyDetector?.EnterCriticalSection();
+                partitionKey = null;
 
+                var partitionKeyPropertyName = _readItemExpression.EntityType.GetPartitionKeyPropertyName();
+                if (partitionKeyPropertyName == null)
+                {
+                    return true;
+                }
+
+                var partitionKeyProperty = _readItemExpression.EntityType.FindProperty(partitionKeyPropertyName);
+
+                if (TryGetParameterValue(partitionKeyProperty, out var value))
+                {
+                    partitionKey = GetString(partitionKeyProperty, value);
+
+                    return !string.IsNullOrEmpty(partitionKey);
+                }
+
+                return false;
+            }
+
+            private bool TryGetResourceId(out string resourceId)
+            {
+                var idProperty = _readItemExpression.EntityType.GetProperties()
+                    .FirstOrDefault(p => p.GetJsonPropertyName() == StoreKeyConvention.IdPropertyJsonName);
+
+                if (TryGetParameterValue(idProperty, out var value))
+                {
+                    resourceId = GetString(idProperty, value);
+
+                    if (string.IsNullOrEmpty(resourceId))
+                    {
+                        throw new InvalidOperationException(KafkaStrings.InvalidResourceId);
+                    }
+
+                    return true;
+                }
+
+                if (TryGenerateIdFromKeys(idProperty, out var generatedValue))
+                {
+                    resourceId = GetString(idProperty, generatedValue);
+
+                    return true;
+                }
+
+                resourceId = null;
+                return false;
+            }
+
+            private bool TryGetParameterValue(IProperty property, out object value)
+            {
+                value = null;
+                return _readItemExpression.PropertyParameters.TryGetValue(property, out var parameterName)
+                    && _kafkaQueryContext.ParameterValues.TryGetValue(parameterName, out value);
+            }
+
+            private static string GetString(IProperty property, object value)
+            {
+                var converter = property.GetTypeMapping().Converter;
+
+                return converter is null
+                    ? (string)value
+                    : (string)converter.ConvertToProvider(value);
+            }
+
+            private bool TryGenerateIdFromKeys(IProperty idProperty, out object value)
+            {
+                var entityEntry = Activator.CreateInstance(_readItemExpression.EntityType.ClrType);
+
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                var internalEntityEntry = new InternalEntityEntry(
+                    _kafkaQueryContext.Context.GetDependencies().StateManager, _readItemExpression.EntityType, entityEntry);
+#pragma warning restore EF1001 // Internal EF Core API usage.
+
+                foreach (var keyProperty in _readItemExpression.EntityType.FindPrimaryKey().Properties)
+                {
+                    var property = _readItemExpression.EntityType.FindProperty(keyProperty.Name);
+
+                    if (TryGetParameterValue(property, out var parameterValue))
+                    {
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                        internalEntityEntry[property] = parameterValue;
+#pragma warning restore EF1001 // Internal EF Core API usage.
+                    }
+                }
+
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                internalEntityEntry.SetEntityState(EntityState.Added);
+
+                value = internalEntityEntry[idProperty];
+
+                internalEntityEntry.SetEntityState(EntityState.Detached);
+#pragma warning restore EF1001 // Internal EF Core API usage.
+
+                return value != null;
+            }
+
+            private sealed class Enumerator : IEnumerator<T>, IAsyncEnumerator<T>
+            {
+                private readonly KafkaQueryContext _kafkaQueryContext;
+                private readonly ReadItemExpression _readItemExpression;
+                private readonly Func<KafkaQueryContext, JObject, T> _shaper;
+                private readonly Type _contextType;
+                private readonly IDiagnosticsLogger<DbLoggerCategory.Query> _queryLogger;
+                private readonly bool _standAloneStateManager;
+                private readonly IConcurrencyDetector _concurrencyDetector;
+                private readonly ReadItemQueryingEnumerable<T> _readItemEnumerable;
+                private readonly CancellationToken _cancellationToken;
+
+                private JObject _item;
+                private bool _hasExecuted;
+
+                public Enumerator(ReadItemQueryingEnumerable<T> readItemEnumerable, CancellationToken cancellationToken = default)
+                {
+                    _kafkaQueryContext = readItemEnumerable._kafkaQueryContext;
+                    _readItemExpression = readItemEnumerable._readItemExpression;
+                    _shaper = readItemEnumerable._shaper;
+                    _contextType = readItemEnumerable._contextType;
+                    _queryLogger = readItemEnumerable._queryLogger;
+                    _standAloneStateManager = readItemEnumerable._standAloneStateManager;
+                    _readItemEnumerable = readItemEnumerable;
+                    _cancellationToken = cancellationToken;
+
+                    _concurrencyDetector = readItemEnumerable._threadSafetyChecksEnabled
+                        ? _kafkaQueryContext.ConcurrencyDetector
+                        : null;
+                }
+
+                object IEnumerator.Current
+                    => Current;
+
+                public T Current { get; private set; }
+
+                public bool MoveNext()
+                {
                     try
                     {
-                        if (!_hasExecuted)
+                        _concurrencyDetector?.EnterCriticalSection();
+
+                        try
                         {
-                            if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
+                            if (!_hasExecuted)
                             {
-                                throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
-                            }
+                                if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
+                                {
+                                    throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
+                                }
 
-                            if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
-                            {
-                                throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
-                            }
+                                if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
+                                {
+                                    throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
+                                }
 
-                            EntityFrameworkEventSource.Log.QueryExecuting();
+                                EntityFrameworkEventSource.Log.QueryExecuting();
 
-                            _item = await _cosmosQueryContext.CosmosClient.ExecuteReadItemAsync(
+                                _item = _kafkaQueryContext.KafkaCluster.ExecuteReadItem(
                                     _readItemExpression.Container,
                                     partitionKey,
-                                    resourceId,
-                                    _cancellationToken)
-                                .ConfigureAwait(false);
+                                    resourceId);
 
-                            return ShapeResult();
+                                return ShapeResult();
+                            }
+
+                            return false;
                         }
-
-                        return false;
+                        finally
+                        {
+                            _concurrencyDetector?.ExitCriticalSection();
+                        }
                     }
-                    finally
-                    {
-                        _concurrencyDetector?.ExitCriticalSection();
-                    }
-                }
-                catch (Exception exception)
-                {
-                    if (_exceptionDetector.IsCancellation(exception, _cancellationToken))
-                    {
-                        _queryLogger.QueryCanceled(_contextType);
-                    }
-                    else
+                    catch (Exception exception)
                     {
                         _queryLogger.QueryIterationFailed(_contextType, exception);
+
+                        throw;
                     }
-
-                    throw;
                 }
-            }
 
-            public void Dispose()
-            {
-                _item = null;
-                _hasExecuted = false;
-            }
+                public async ValueTask<bool> MoveNextAsync()
+                {
+                    try
+                    {
+                        _concurrencyDetector?.EnterCriticalSection();
 
-            public ValueTask DisposeAsync()
-            {
-                Dispose();
+                        try
+                        {
+                            if (!_hasExecuted)
+                            {
+                                if (!_readItemEnumerable.TryGetResourceId(out var resourceId))
+                                {
+                                    throw new InvalidOperationException(KafkaStrings.ResourceIdMissing);
+                                }
 
-                return default;
-            }
+                                if (!_readItemEnumerable.TryGetPartitionId(out var partitionKey))
+                                {
+                                    throw new InvalidOperationException(KafkaStrings.PartitionKeyMissing);
+                                }
 
-            public void Reset()
-                => throw new NotSupportedException(CoreStrings.EnumerableResetNotSupported);
+                                EntityFrameworkEventSource.Log.QueryExecuting();
 
-            private bool ShapeResult()
-            {
-                var hasNext = !(_item is null);
+                                _item = await _kafkaQueryContext.KafkaCluster.ExecuteReadItemAsync(
+                                        _readItemExpression.Container,
+                                        partitionKey,
+                                        resourceId,
+                                        _cancellationToken)
+                                    .ConfigureAwait(false);
 
-                _cosmosQueryContext.InitializeStateManager(_standAloneStateManager);
+                                return ShapeResult();
+                            }
 
-                Current
-                    = hasNext
-                        ? _shaper(_cosmosQueryContext, _item)
-                        : default;
+                            return false;
+                        }
+                        finally
+                        {
+                            _concurrencyDetector?.ExitCriticalSection();
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        _queryLogger.QueryIterationFailed(_contextType, exception);
 
-                _hasExecuted = true;
+                        throw;
+                    }
+                }
 
-                return hasNext;
+                public void Dispose()
+                {
+                    _item = null;
+                    _hasExecuted = false;
+                }
+
+                public ValueTask DisposeAsync()
+                {
+                    Dispose();
+
+                    return default;
+                }
+
+                public void Reset()
+                    => throw new NotSupportedException(CoreStrings.EnumerableResetNotSupported);
+
+                private bool ShapeResult()
+                {
+                    var hasNext = !(_item is null);
+
+                    _kafkaQueryContext.InitializeStateManager(_standAloneStateManager);
+
+                    Current
+                        = hasNext
+                            ? _shaper(_kafkaQueryContext, _item)
+                            : default;
+
+                    _hasExecuted = true;
+
+                    return hasNext;
+                }
             }
         }
     }

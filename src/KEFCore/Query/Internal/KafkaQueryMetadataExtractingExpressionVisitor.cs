@@ -33,7 +33,7 @@ public class KafkaQueryMetadataExtractingExpressionVisitor : ExpressionVisitor
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
         if (methodCallExpression.Method.IsGenericMethod
-            && methodCallExpression.Method.GetGenericMethodDefinition() == CosmosQueryableExtensions.WithPartitionKeyMethodInfo)
+            && methodCallExpression.Method.GetGenericMethodDefinition() == KafkaQueryableExtensions.WithPartitionKeyMethodInfo)
         {
             var innerQueryable = Visit(methodCallExpression.Arguments[0]);
 

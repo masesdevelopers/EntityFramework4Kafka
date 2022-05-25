@@ -9,7 +9,7 @@ namespace MASES.EntityFrameworkCore.KNet.Storage.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class CosmosSqlQuery
+public class KafkaSqlQuery
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -17,7 +17,7 @@ public class CosmosSqlQuery
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public CosmosSqlQuery(string query, IReadOnlyList<SqlParameter> parameters)
+    public KafkaSqlQuery(string query, IReadOnlyList<SqlParameter> parameters)
     {
         Query = query;
         Parameters = parameters;

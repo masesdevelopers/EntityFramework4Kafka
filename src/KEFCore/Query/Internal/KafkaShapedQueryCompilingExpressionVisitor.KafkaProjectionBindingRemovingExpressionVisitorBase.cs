@@ -687,7 +687,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
                         Expression.Call(
                             jTokenParameter,
                             JTokenToObjectWithSerializerMethodInfo.MakeGenericMethod(converter.ProviderClrType),
-                            Expression.Constant(CosmosClientWrapper.Serializer)),
+                            Expression.Constant(KafkaCluster.Serializer)),
                         converter.ConvertFromProviderExpression.Body);
 
                 if (body.Type != type)
@@ -748,6 +748,6 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor
             => token == null || token.Type == JTokenType.Null ? default : token.ToObject<T>();
 
         private static T SafeToObjectWithSerializer<T>(JToken token)
-            => token == null || token.Type == JTokenType.Null ? default : token.ToObject<T>(CosmosClientWrapper.Serializer);
+            => token == null || token.Type == JTokenType.Null ? default : token.ToObject<T>(KafkaCluster.Serializer);
     }
 }
