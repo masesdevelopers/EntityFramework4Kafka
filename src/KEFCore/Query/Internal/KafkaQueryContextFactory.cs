@@ -14,6 +14,7 @@ namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
 public class KafkaQueryContextFactory : IQueryContextFactory
 {
     private readonly IKafkaCluster _kafkaCluster;
+    readonly KafkaQueryContext context;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -27,6 +28,7 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     {
         Dependencies = dependencies;
         _kafkaCluster = kafkaCluster;
+        context = new KafkaQueryContext(Dependencies, _cluster);
     }
 
     /// <summary>
@@ -40,6 +42,5 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual QueryContext Create()
-        => new KafkaQueryContext(Dependencies, _kafkaCluster);
+    public virtual QueryContext Create() => context; // new KafkaQueryContext(Dependencies, _cluster);
 }

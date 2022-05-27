@@ -13,6 +13,21 @@ namespace MASES.EntityFrameworkCore.KNet.Query.Internal;
 /// </summary>
 public class KafkaQueryContext : QueryContext
 {
+    private readonly IDictionary<IEntityType, IEnumerable<ValueBuffer>> _valueBuffersCache
+        = new Dictionary<IEntityType, IEnumerable<ValueBuffer>>();
+
+    public virtual IEnumerable<ValueBuffer> GetValueBuffers(IEntityType entityType)
+    {
+        if (!_valueBuffersCache.TryGetValue(entityType, out var valueBuffers))
+        {
+            valueBuffers = Cluster.GetData(entityType);
+
+            _valueBuffersCache[entityType] = valueBuffers;
+        }
+
+        return valueBuffers;
+    }
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
