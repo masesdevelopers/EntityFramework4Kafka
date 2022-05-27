@@ -20,7 +20,7 @@ public class KafkaQueryContext : QueryContext
     {
         if (!_valueBuffersCache.TryGetValue(entityType, out var valueBuffers))
         {
-            valueBuffers = Cluster.GetData(entityType);
+            valueBuffers = KafkaCluster.GetData(entityType);
 
             _valueBuffersCache[entityType] = valueBuffers;
         }

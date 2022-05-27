@@ -28,7 +28,7 @@ public class KafkaQueryContextFactory : IQueryContextFactory
     {
         Dependencies = dependencies;
         _kafkaCluster = kafkaCluster;
-        context = new KafkaQueryContext(Dependencies, _cluster);
+        context = new KafkaQueryContext(Dependencies, _kafkaCluster);
     }
 
     /// <summary>

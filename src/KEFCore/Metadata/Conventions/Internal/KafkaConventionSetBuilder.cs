@@ -154,7 +154,7 @@ public class KafkaConventionSetBuilder : ProviderConventionSetBuilder
             .AddEntityFrameworkKafkaDatabase()
             .AddDbContext<DbContext>(
                 (p, o) =>
-                    o.UseKafkaDatabase("dummy", "localhost")
+                    o.UseKafkaDatabase("", "dummy", "localhost")
                         .UseInternalServiceProvider(p))
             .BuildServiceProvider();
 
