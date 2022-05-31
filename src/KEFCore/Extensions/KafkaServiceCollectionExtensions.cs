@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 /// <remarks>
 ///     See <see href="https://aka.ms/efcore-docs-dbcontext-options">Using DbContextOptions</see>, and
-///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information and examples.
+///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information and examples.
 /// </remarks>
 public static class KafkaServiceCollectionExtensions
 {
@@ -46,7 +46,7 @@ public static class KafkaServiceCollectionExtensions
     ///     </para>
     ///     <para>
     ///         See <see href="https://aka.ms/efcore-docs-dbcontext-options">Using DbContextOptions</see>, and
-    ///         <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information and examples.
+    ///         <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information and examples.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TContext">The type of context to be registered.</typeparam>

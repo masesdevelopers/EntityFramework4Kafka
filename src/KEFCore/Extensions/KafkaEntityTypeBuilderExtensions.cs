@@ -38,7 +38,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the container.</param>
@@ -60,7 +60,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <typeparam name="TEntity">The entity type being configured.</typeparam>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
@@ -77,7 +77,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the container.</param>
@@ -107,7 +107,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the container.</param>
@@ -129,7 +129,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the parent property.</param>
@@ -148,7 +148,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the parent property.</param>
@@ -169,7 +169,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the parent property.</param>
@@ -199,7 +199,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the parent property.</param>
@@ -221,7 +221,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the partition key property.</param>
@@ -240,7 +240,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the partition key property.</param>
@@ -260,7 +260,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="propertyExpression">The  partition key property.</param>
@@ -282,7 +282,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the partition key property.</param>
@@ -312,7 +312,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="name">The name of the partition key property.</param>
@@ -334,7 +334,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <returns>The same builder instance so that multiple calls can be chained.</returns>
@@ -353,7 +353,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <returns>The same builder instance so that multiple calls can be chained.</returns>
@@ -370,7 +370,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -389,7 +389,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -409,7 +409,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -439,7 +439,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -460,7 +460,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -479,7 +479,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -499,7 +499,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>
@@ -529,7 +529,7 @@ public static class KafkaEntityTypeBuilderExtensions
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
     /// <param name="seconds">The time to live.</param>

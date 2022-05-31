@@ -11,113 +11,114 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 #nullable enable
 
-namespace Microsoft.EntityFrameworkCore.Utilities;
-
-[DebuggerStepThrough]
-internal static class Check
+namespace Microsoft.EntityFrameworkCore.Utilities
 {
-    [ContractAnnotation("value:null => halt")]
-    [return: NotNull]
-    public static T NotNull<T>([NoEnumeration] [AllowNull] [NotNull] T value, [InvokerParameterName] string parameterName)
+    [DebuggerStepThrough]
+    internal static class Check
     {
-        if (value is null)
+        [ContractAnnotation("value:null => halt")]
+        [return: NotNull]
+        public static T NotNull<T>([NoEnumeration] [AllowNull] [NotNull] T value, [InvokerParameterName] string parameterName)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            if (value is null)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentNullException(parameterName);
+                throw new ArgumentNullException(parameterName);
+            }
+
+            return value;
         }
 
-        return value;
-    }
-
-    [ContractAnnotation("value:null => halt")]
-    public static IReadOnlyList<T> NotEmpty<T>(
-        [NotNull] IReadOnlyList<T>? value,
-        [InvokerParameterName] string parameterName)
-    {
-        NotNull(value, parameterName);
-
-        if (value.Count == 0)
+        [ContractAnnotation("value:null => halt")]
+        public static IReadOnlyList<T> NotEmpty<T>(
+            [NotNull] IReadOnlyList<T>? value,
+            [InvokerParameterName] string parameterName)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNull(value, parameterName);
 
-            throw new ArgumentException(AbstractionsStrings.CollectionArgumentIsEmpty(parameterName));
+            if (value.Count == 0)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentException(AbstractionsStrings.CollectionArgumentIsEmpty(parameterName));
+            }
+
+            return value;
         }
 
-        return value;
-    }
-
-    [ContractAnnotation("value:null => halt")]
-    public static string NotEmpty([NotNull] string? value, [InvokerParameterName] string parameterName)
-    {
-        if (value is null)
+        [ContractAnnotation("value:null => halt")]
+        public static string NotEmpty([NotNull] string? value, [InvokerParameterName] string parameterName)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            if (value is null)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentNullException(parameterName);
+                throw new ArgumentNullException(parameterName);
+            }
+
+            if (value.Trim().Length == 0)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+            }
+
+            return value;
         }
 
-        if (value.Trim().Length == 0)
+        public static string? NullButNotEmpty(string? value, [InvokerParameterName] string parameterName)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            if (value is not null && value.Length == 0)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+                throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+            }
+
+            return value;
         }
 
-        return value;
-    }
-
-    public static string? NullButNotEmpty(string? value, [InvokerParameterName] string parameterName)
-    {
-        if (value is not null && value.Length == 0)
+        public static IReadOnlyList<T> HasNoNulls<T>(
+            [NotNull] IReadOnlyList<T>? value,
+            [InvokerParameterName] string parameterName)
+            where T : class
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNull(value, parameterName);
 
-            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+            if (value.Any(e => e == null))
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentException(parameterName);
+            }
+
+            return value;
         }
 
-        return value;
-    }
-
-    public static IReadOnlyList<T> HasNoNulls<T>(
-        [NotNull] IReadOnlyList<T>? value,
-        [InvokerParameterName] string parameterName)
-        where T : class
-    {
-        NotNull(value, parameterName);
-
-        if (value.Any(e => e == null))
+        public static IReadOnlyList<string> HasNoEmptyElements(
+            [NotNull] IReadOnlyList<string>? value,
+            [InvokerParameterName] string parameterName)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNull(value, parameterName);
 
-            throw new ArgumentException(parameterName);
+            if (value.Any(s => string.IsNullOrWhiteSpace(s)))
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentException(AbstractionsStrings.CollectionArgumentHasEmptyElements(parameterName));
+            }
+
+            return value;
         }
 
-        return value;
-    }
-
-    public static IReadOnlyList<string> HasNoEmptyElements(
-        [NotNull] IReadOnlyList<string>? value,
-        [InvokerParameterName] string parameterName)
-    {
-        NotNull(value, parameterName);
-
-        if (value.Any(s => string.IsNullOrWhiteSpace(s)))
+        [Conditional("DEBUG")]
+        public static void DebugAssert([DoesNotReturnIf(false)] bool condition, string message)
         {
-            NotEmpty(parameterName, nameof(parameterName));
-
-            throw new ArgumentException(AbstractionsStrings.CollectionArgumentHasEmptyElements(parameterName));
-        }
-
-        return value;
-    }
-
-    [Conditional("DEBUG")]
-    public static void DebugAssert([DoesNotReturnIf(false)] bool condition, string message)
-    {
-        if (!condition)
-        {
-            throw new Exception($"Check.DebugAssert failed: {message}");
+            if (!condition)
+            {
+                throw new Exception($"Check.DebugAssert failed: {message}");
+            }
         }
     }
 }

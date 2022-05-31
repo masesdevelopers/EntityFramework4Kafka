@@ -23,18 +23,20 @@ using MASES.EntityFrameworkCore.KNet.Diagnostics.Internal;
 using MASES.EntityFrameworkCore.KNet.Infrastructure.Internal;
 using MASES.KNet.Clients.Admin;
 using Java.Util;
-using MASES.JCOBridge.C2JBridge;
 using MASES.KNet.Common.Config;
 using MASES.KNet.Clients.Producer;
 using MASES.EntityFrameworkCore.KNet.Serdes.Internal;
 using System.Collections.Concurrent;
 using MASES.KNet.Common.Errors;
 using Java.Util.Concurrent;
+using Newtonsoft.Json;
 
 namespace MASES.EntityFrameworkCore.KNet.Storage.Internal;
 
 public class KafkaCluster : IKafkaCluster
 {
+    public static readonly JsonSerializer Serializer;
+
     private readonly KafkaOptionsExtension _options;
     private readonly IKafkaTableFactory _tableFactory;
     private readonly IKafkaSerdesFactory _serdesFactory;
@@ -47,6 +49,14 @@ public class KafkaCluster : IKafkaCluster
 
     private IProducer<string, string>? _globalProducer = null;
     private readonly ConcurrentDictionary<IEntityType, IProducer<string, string>> _producers;
+
+    static KafkaCluster()
+    {
+        Serializer = JsonSerializer.Create();
+        Serializer.Converters.Add(new ByteArrayConverter());
+        Serializer.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+        Serializer.DateParseHandling = DateParseHandling.None;
+    }
 
     public KafkaCluster(
         KafkaOptionsExtension options,

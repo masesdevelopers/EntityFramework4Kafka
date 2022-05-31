@@ -6,109 +6,110 @@ using System.Globalization;
 
 #nullable enable
 
-namespace System.Text;
-
-internal static class StringBuilderExtensions
+namespace System.Text
 {
-    public static StringBuilder AppendJoin(
-        this StringBuilder stringBuilder,
-        IEnumerable<string> values,
-        string separator = ", ")
-        => stringBuilder.AppendJoin(values, (sb, value) => sb.Append(value), separator);
-
-    public static StringBuilder AppendJoin(
-        this StringBuilder stringBuilder,
-        string separator,
-        params string[] values)
-        => stringBuilder.AppendJoin(values, (sb, value) => sb.Append(value), separator);
-
-    public static StringBuilder AppendJoin<T>(
-        this StringBuilder stringBuilder,
-        IEnumerable<T> values,
-        Action<StringBuilder, T> joinAction,
-        string separator = ", ")
+    internal static class StringBuilderExtensions
     {
-        var appended = false;
+        public static StringBuilder AppendJoin(
+            this StringBuilder stringBuilder,
+            IEnumerable<string> values,
+            string separator = ", ")
+            => stringBuilder.AppendJoin(values, (sb, value) => sb.Append(value), separator);
 
-        foreach (var value in values)
+        public static StringBuilder AppendJoin(
+            this StringBuilder stringBuilder,
+            string separator,
+            params string[] values)
+            => stringBuilder.AppendJoin(values, (sb, value) => sb.Append(value), separator);
+
+        public static StringBuilder AppendJoin<T>(
+            this StringBuilder stringBuilder,
+            IEnumerable<T> values,
+            Action<StringBuilder, T> joinAction,
+            string separator = ", ")
         {
-            joinAction(stringBuilder, value);
-            stringBuilder.Append(separator);
-            appended = true;
-        }
+            var appended = false;
 
-        if (appended)
-        {
-            stringBuilder.Length -= separator.Length;
-        }
-
-        return stringBuilder;
-    }
-
-    public static StringBuilder AppendJoin<T>(
-        this StringBuilder stringBuilder,
-        IEnumerable<T> values,
-        Func<StringBuilder, T, bool> joinFunc,
-        string separator = ", ")
-    {
-        var appended = false;
-
-        foreach (var value in values)
-        {
-            if (joinFunc(stringBuilder, value))
+            foreach (var value in values)
             {
+                joinAction(stringBuilder, value);
                 stringBuilder.Append(separator);
                 appended = true;
             }
-        }
 
-        if (appended)
-        {
-            stringBuilder.Length -= separator.Length;
-        }
-
-        return stringBuilder;
-    }
-
-    public static StringBuilder AppendJoin<T, TParam>(
-        this StringBuilder stringBuilder,
-        IEnumerable<T> values,
-        TParam param,
-        Action<StringBuilder, T, TParam> joinAction,
-        string separator = ", ")
-    {
-        var appended = false;
-
-        foreach (var value in values)
-        {
-            joinAction(stringBuilder, value, param);
-            stringBuilder.Append(separator);
-            appended = true;
-        }
-
-        if (appended)
-        {
-            stringBuilder.Length -= separator.Length;
-        }
-
-        return stringBuilder;
-    }
-
-    public static void AppendBytes(this StringBuilder builder, byte[] bytes)
-    {
-        builder.Append("'0x");
-
-        for (var i = 0; i < bytes.Length; i++)
-        {
-            if (i > 31)
+            if (appended)
             {
-                builder.Append("...");
-                break;
+                stringBuilder.Length -= separator.Length;
             }
 
-            builder.Append(bytes[i].ToString("X2", CultureInfo.InvariantCulture));
+            return stringBuilder;
         }
 
-        builder.Append('\'');
+        public static StringBuilder AppendJoin<T>(
+            this StringBuilder stringBuilder,
+            IEnumerable<T> values,
+            Func<StringBuilder, T, bool> joinFunc,
+            string separator = ", ")
+        {
+            var appended = false;
+
+            foreach (var value in values)
+            {
+                if (joinFunc(stringBuilder, value))
+                {
+                    stringBuilder.Append(separator);
+                    appended = true;
+                }
+            }
+
+            if (appended)
+            {
+                stringBuilder.Length -= separator.Length;
+            }
+
+            return stringBuilder;
+        }
+
+        public static StringBuilder AppendJoin<T, TParam>(
+            this StringBuilder stringBuilder,
+            IEnumerable<T> values,
+            TParam param,
+            Action<StringBuilder, T, TParam> joinAction,
+            string separator = ", ")
+        {
+            var appended = false;
+
+            foreach (var value in values)
+            {
+                joinAction(stringBuilder, value, param);
+                stringBuilder.Append(separator);
+                appended = true;
+            }
+
+            if (appended)
+            {
+                stringBuilder.Length -= separator.Length;
+            }
+
+            return stringBuilder;
+        }
+
+        public static void AppendBytes(this StringBuilder builder, byte[] bytes)
+        {
+            builder.Append("'0x");
+
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                if (i > 31)
+                {
+                    builder.Append("...");
+                    break;
+                }
+
+                builder.Append(bytes[i].ToString("X2", CultureInfo.InvariantCulture));
+            }
+
+            builder.Append('\'');
+        }
     }
 }

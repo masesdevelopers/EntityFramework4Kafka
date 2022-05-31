@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 
 #nullable enable
 
-namespace Microsoft.EntityFrameworkCore.Utilities;
-
-internal static class DisposableExtensions
+namespace Microsoft.EntityFrameworkCore.Utilities
 {
-    public static ValueTask DisposeAsyncIfAvailable(this IDisposable? disposable)
+    internal static class DisposableExtensions
     {
-        if (disposable != null)
+        public static ValueTask DisposeAsyncIfAvailable(this IDisposable? disposable)
         {
-            if (disposable is IAsyncDisposable asyncDisposable)
+            if (disposable != null)
             {
-                return asyncDisposable.DisposeAsync();
+                if (disposable is IAsyncDisposable asyncDisposable)
+                {
+                    return asyncDisposable.DisposeAsync();
+                }
+
+                disposable.Dispose();
             }
 
-            disposable.Dispose();
+            return default;
         }
-
-        return default;
     }
 }

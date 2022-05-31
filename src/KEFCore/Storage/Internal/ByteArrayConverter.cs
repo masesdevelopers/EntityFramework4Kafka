@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal
+namespace MASES.EntityFrameworkCore.KNet.Storage.Internal
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

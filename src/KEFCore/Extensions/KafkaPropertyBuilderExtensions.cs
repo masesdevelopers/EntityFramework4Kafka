@@ -13,7 +13,7 @@ namespace MASES.EntityFrameworkCore.KNet
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     public static class KafkaPropertyBuilderExtensions
     {
@@ -22,7 +22,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <remarks> If an empty string is supplied then the property will not be persisted. </remarks>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>
@@ -45,7 +45,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <typeparam name="TProperty">The type of the property being configured.</typeparam>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>
@@ -66,7 +66,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>
         /// <param name="name">The name of the property.</param>
@@ -95,7 +95,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>
         /// <param name="name">The name of the property.</param>
@@ -112,7 +112,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>
         /// <returns>The same builder instance so that multiple calls can be chained.</returns>
@@ -131,7 +131,7 @@ namespace MASES.EntityFrameworkCore.KNet
         /// </summary>
         /// <remarks>
         ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-        ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+        ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
         /// </remarks>
         /// <typeparam name="TProperty">The type of the property being configured.</typeparam>
         /// <param name="propertyBuilder">The builder for the property being configured.</param>

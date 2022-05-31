@@ -114,7 +114,7 @@ public class SqlConstantExpression : SqlExpression
             return null;
         }
 
-        return (value as JToken) ?? JToken.FromObject(value, CosmosClientWrapper.Serializer);
+        return (value as JToken) ?? JToken.FromObject(value, KafkaCluster.Serializer);
     }
 
     /// <summary>

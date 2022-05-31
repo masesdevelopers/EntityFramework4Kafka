@@ -13,7 +13,7 @@ namespace MASES.EntityFrameworkCore.KNet
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-modeling">Modeling entity types and relationships</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information.
     /// </remarks>
     public static class KafkaModelExtensions
     {

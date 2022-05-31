@@ -75,7 +75,7 @@ public class KafkaDbContextOptionsBuilder : IKafkaDbContextOptionsBuilderInfrast
     /// </summary>
     /// <remarks>
     ///     See <see href="https://aka.ms/efcore-docs-dbcontext-options">Using DbContextOptions</see>, and
-    ///     <see href="https://aka.ms/efcore-docs-cosmos">Accessing Azure Cosmos DB with EF Core</see> for more information and examples.
+    ///     <see href="https://github.com/masesgroup/KEFCore">The EF Core Kafka database provider</see> for more information and examples.
     /// </remarks>
     /// <param name="getExecutionStrategy">A function that returns a new instance of an execution strategy.</param>
     public virtual KafkaDbContextOptionsBuilder ExecutionStrategy(

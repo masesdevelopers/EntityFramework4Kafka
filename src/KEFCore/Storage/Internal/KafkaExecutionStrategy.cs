@@ -96,8 +96,8 @@ public class KafkaExecutionStrategy : ExecutionStrategy
     {
         return exception switch
         {
-            CosmosException cosmosException => IsTransient(cosmosException.StatusCode),
-            HttpException httpException => IsTransient(httpException.Response.StatusCode),
+            //CosmosException cosmosException => IsTransient(cosmosException.StatusCode),
+            //HttpException httpException => IsTransient(httpException.Response.StatusCode),
             WebException webException => IsTransient(((HttpWebResponse)webException.Response!).StatusCode),
             _ => false
         };
@@ -126,25 +126,25 @@ public class KafkaExecutionStrategy : ExecutionStrategy
     {
         switch (exception)
         {
-            case CosmosException cosmosException:
-                return cosmosException.RetryAfter;
+            //case CosmosException cosmosException:
+            //    return cosmosException.RetryAfter;
 
-            case HttpException httpException:
-            {
-                if (httpException.Response.Headers.TryGetValues("x-ms-retry-after-ms", out var values)
-                    && TryParseMsRetryAfter(values.FirstOrDefault(), out var delay))
-                {
-                    return delay;
-                }
+            //case HttpException httpException:
+            //{
+            //    if (httpException.Response.Headers.TryGetValues("x-ms-retry-after-ms", out var values)
+            //        && TryParseMsRetryAfter(values.FirstOrDefault(), out var delay))
+            //    {
+            //        return delay;
+            //    }
 
-                if (httpException.Response.Headers.TryGetValues("Retry-After", out values)
-                    && TryParseRetryAfter(values.FirstOrDefault(), out delay))
-                {
-                    return delay;
-                }
+            //    if (httpException.Response.Headers.TryGetValues("Retry-After", out values)
+            //        && TryParseRetryAfter(values.FirstOrDefault(), out delay))
+            //    {
+            //        return delay;
+            //    }
 
-                return null;
-            }
+            //    return null;
+            //}
 
             case WebException webException:
             {

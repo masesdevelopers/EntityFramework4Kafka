@@ -84,6 +84,7 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor : ShapedQueryCom
                     Expression.Constant(_threadSafetyChecksEnabled));
 
             case ReadItemExpression readItemExpression:
+#if ENABLE_READITEM_QUERYING_ENUMERABLE
                 shaperBody = new KafkaProjectionBindingRemovingReadItemExpressionVisitor(
                         readItemExpression, jObjectParameter,
                         QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.TrackAll)
@@ -105,7 +106,9 @@ public partial class KafkaShapedQueryCompilingExpressionVisitor : ShapedQueryCom
                     Expression.Constant(
                         QueryCompilationContext.QueryTrackingBehavior == QueryTrackingBehavior.NoTrackingWithIdentityResolution),
                     Expression.Constant(_threadSafetyChecksEnabled));
-
+#else
+                throw new NotImplementedException("ReadItemExpression");
+#endif
             default:
                 throw new NotSupportedException(CoreStrings.UnhandledExpressionNode(shapedQueryExpression.QueryExpression));
         }

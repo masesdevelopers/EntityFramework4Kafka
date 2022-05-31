@@ -20,6 +20,7 @@ namespace MASES.EntityFrameworkCore.KNet.Query.Internal
     /// </summary>
     public partial class KafkaShapedQueryCompilingExpressionVisitor
     {
+#if ENABLE_READITEM_QUERYING_ENUMERABLE
         private sealed class ReadItemQueryingEnumerable<T> : IEnumerable<T>, IAsyncEnumerable<T>, IQueryingEnumerable
         {
             private readonly KafkaQueryContext _kafkaQueryContext;
@@ -322,5 +323,6 @@ namespace MASES.EntityFrameworkCore.KNet.Query.Internal
                 }
             }
         }
+#endif
     }
 }
