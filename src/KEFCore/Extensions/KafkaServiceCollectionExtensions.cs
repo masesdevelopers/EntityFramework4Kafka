@@ -115,6 +115,10 @@ public static class KafkaServiceCollectionExtensions
             .TryAddProviderSpecificServices(
                 b => b
                     .TryAddSingleton<IKafkaSingletonOptions, KafkaSingletonOptions>()
+                    .TryAddSingleton<IKafkaClusterCache, KafkaClusterCache>()
+                    .TryAddSingleton<IKafkaTableFactory, KafkaTableFactory>()
+                    .TryAddScoped<IKafkaDatabase, KafkaDatabase>()
+                    .TryAddScoped<IKafkaSerdesFactory, KafkaSerdesFactory>()
                     .TryAddSingleton<IQuerySqlGeneratorFactory, QuerySqlGeneratorFactory>()
                     .TryAddScoped<ISqlExpressionFactory, SqlExpressionFactory>()
                     .TryAddScoped<IMemberTranslatorProvider, KafkaMemberTranslatorProvider>()
